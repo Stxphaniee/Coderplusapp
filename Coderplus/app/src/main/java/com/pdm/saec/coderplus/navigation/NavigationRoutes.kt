@@ -13,6 +13,8 @@ object NavigationRoutes {
     const val AddEditQuestion = "add_edit_question"
     const val SearchUser = "search_user"
     const val Levels = "levels"
+    const val LockedLevels = "locked_levels"
+
 
 
 

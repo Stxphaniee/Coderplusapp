@@ -3,6 +3,7 @@ package com.pdm.saec.coderplus.ui.theme.screens
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -11,29 +12,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
+import androidx.navigation.NavHostController
 import com.pdm.saec.coderplus.R
+import com.pdm.saec.coderplus.navigation.NavigationRoutes
+import com.pdm.saec.coderplus.ui.theme.components.BottomNavigationBar
 
 @Composable
-fun LevelScreen(userName: String = "Joaquin") {
+fun LevelScreen(userName: String = "Joaquin", navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFBFDDF6), // celeste claro
-                        Color(0xFF075B9A) // azul oscuro
-                    )
+                    colors = listOf(Color(0xFFBFDDF6), Color(0xFF075B9A))
                 )
             )
     ) {
@@ -54,10 +53,7 @@ fun LevelScreen(userName: String = "Joaquin") {
             )
             Text(
                 text = "¿Qué te gustaría aprender el día de hoy?",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    color = Color(0xFF003366)
-                )
+                style = TextStyle(fontSize = 14.sp, color = Color(0xFF003366))
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -74,17 +70,22 @@ fun LevelScreen(userName: String = "Joaquin") {
                     LevelItem(level = "Nivel 2", isCompleted = true)
                     LevelItem(level = "Nivel 3", isCompleted = true)
                     LevelItem(level = "Nivel 4", isCompleted = true)
-                    LevelItem(level = "Nivel 5", isCompleted = false, isNext = true)
+                    LevelItem(
+                        level = "Nivel 5",
+                        isCompleted = false,
+                        isNext = true,
+                        onClick = { navController.navigate(NavigationRoutes.LockedLevels) }
+                    )
                 }
             }
         }
 
-        BottomNavigationBar(modifier = Modifier.align(Alignment.BottomCenter))
+        BottomNavigationBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
 @Composable
-fun LevelItem(level: String, isCompleted: Boolean, isNext: Boolean = false) {
+fun LevelItem(level: String, isCompleted: Boolean, isNext: Boolean = false, onClick: (() -> Unit)? = null) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = level,
@@ -99,7 +100,8 @@ fun LevelItem(level: String, isCompleted: Boolean, isNext: Boolean = false) {
             modifier = Modifier
                 .size(60.dp)
                 .shadow(8.dp, shape = CircleShape)
-                .background(Color(0xFF1C2B56), shape = CircleShape),
+                .background(Color(0xFF1C2B56), shape = CircleShape)
+                .let { if (onClick != null) it.clickable { onClick() } else it },
             contentAlignment = Alignment.Center
         ) {
             val icon = when {
@@ -129,41 +131,6 @@ fun PathBetweenLevels() {
             cubicTo(width / 4, 600f, width * 3 / 4, 700f, width / 2, 800f)
         }
 
-        drawPath(
-            path = path,
-            color = Color.White,
-            style = Stroke(width = 6f)
-        )
-    }
-}
-
-@Composable
-fun BottomNavigationBar(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color(0xFF1C2B56))
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_fire),
-            contentDescription = "Progreso",
-            tint = Color.White,
-            modifier = Modifier.size(28.dp)
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_home),
-            contentDescription = "Inicio",
-            tint = Color.White,
-            modifier = Modifier.size(28.dp)
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_profile),
-            contentDescription = "Perfil",
-            tint = Color.White,
-            modifier = Modifier.size(28.dp)
-        )
+        drawPath(path = path, color = Color.White, style = Stroke(width = 6f))
     }
 }

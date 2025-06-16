@@ -2,10 +2,8 @@ package com.pdm.saec.coderplus.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.pdm.saec.coderplus.ui.theme.components.ConfirmDeleteDialog
 import com.pdm.saec.coderplus.ui.theme.screens.*
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
@@ -22,19 +20,22 @@ fun NavGraph(
         composable(NavigationRoutes.Welcome) {
             WelcomeScreen(
                 onStartClick = {
-                    viewModel.loginAsRegularUser()
-                    if (viewModel.currentUser?.isAdmin == true) {
-                        navController.navigate(NavigationRoutes.AdminLevels)
-                    } else {
-                        navController.navigate(NavigationRoutes.ProgressExplosion)
-                    }
+                    navController.navigate(NavigationRoutes.Levels)
                 },
                 onGoogleClick = {
-                    viewModel.loginAsAdmin()
-                    navController.navigate(NavigationRoutes.AdminLevels)
+                    navController.navigate(NavigationRoutes.Levels)
                 },
                 navController = navController
             )
+        }
+
+        composable(NavigationRoutes.Levels) {
+            LevelScreen(navController = navController)
+        }
+
+        // NUEVO: Pantalla de niveles bloqueados
+        composable(NavigationRoutes.LockedLevels) {
+            LockedLevelsScreen(navController = navController)
         }
 
         composable(NavigationRoutes.ProgressExplosion) {
@@ -66,7 +67,6 @@ fun NavGraph(
                     }
                 )
             } else {
-                // si el usuario es null, vuelve a la pantalla de inicio
                 navController.navigate(NavigationRoutes.Welcome)
             }
         }
@@ -115,37 +115,8 @@ fun NavGraph(
             )
         }
 
-        composable(NavigationRoutes.AdminLevels) {
-            AdminLevelsScreen(
-
-                onAddLevel = {
-                    navController.navigate("${NavigationRoutes.AddEditQuestion}/0")
-                },
-                onEditLevel = { level ->
-                    navController.navigate("${NavigationRoutes.AddEditQuestion}/$level")
-                },
-
-
-            )
-        }
-
-
-
-        composable(
-            "${NavigationRoutes.AddEditQuestion}/{level}",
-            arguments = listOf(navArgument("level") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val level = backStackEntry.arguments?.getInt("level") ?: 0
-            AddEditQuestionScreen(
-                level = level,
-                onSave = { question, options, correctIndex ->
-                    // guardar lógica
-                    navController.popBackStack()
-                },
-                onCancel = {
-                    navController.popBackStack()
-                }
-            )
-        }
+        // Admin y edición de preguntas (opcional, no se elimina)
+        // composable(NavigationRoutes.AdminLevels) { AdminLevelsScreen() }
+        // composable(NavigationRoutes.AddEditQuestion) { AddEditQuestionScreen() }
     }
 }

@@ -117,15 +117,17 @@ fun NavGraph(
 
         composable(NavigationRoutes.AdminLevels) {
             AdminLevelsScreen(
+
                 onAddLevel = {
                     navController.navigate("${NavigationRoutes.AddEditQuestion}/0")
                 },
                 onEditLevel = { level ->
                     navController.navigate("${NavigationRoutes.AddEditQuestion}/$level")
-                }
+                },
+
+
             )
         }
-
 
 
 

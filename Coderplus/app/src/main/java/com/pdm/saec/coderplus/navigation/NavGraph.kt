@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.pdm.saec.coderplus.ui.theme.components.ConfirmDeleteDialog
+import com.pdm.saec.coderplus.ui.theme.components.MainScaffold
 import com.pdm.saec.coderplus.ui.theme.screens.*
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
 
@@ -30,12 +31,15 @@ fun NavGraph(
         }
 
         composable(NavigationRoutes.Levels) {
-            LevelScreen(navController = navController)
+            MainScaffold(navController) { modifier ->
+                LevelScreen(navController = navController, modifier = modifier)
+            }
         }
 
-        // NUEVO: Pantalla de niveles bloqueados
         composable(NavigationRoutes.LockedLevels) {
-            LockedLevelsScreen(navController = navController)
+            MainScaffold(navController) { modifier ->
+                LockedLevelsScreen(navController = navController, modifier = modifier)
+            }
         }
 
         composable(NavigationRoutes.ProgressExplosion) {
@@ -47,25 +51,30 @@ fun NavGraph(
         }
 
         composable(NavigationRoutes.Quiz) {
-            QuizScreen()
+            MainScaffold(navController) { modifier ->
+                QuizScreen(navController = navController, modifier = modifier)
+            }
         }
 
         composable(NavigationRoutes.Profile) {
             val user = viewModel.currentUser
             if (user != null) {
-                ProfileScreen(
-                    user = user,
-                    onEditProfile = {
-                        navController.navigate(NavigationRoutes.EditProfile)
-                    },
-                    onDeleteAccount = {
-                        navController.navigate(NavigationRoutes.ConfirmDelete)
-                    },
-                    onLogout = {
-                        viewModel.currentUser = null
-                        navController.popBackStack(NavigationRoutes.Welcome, inclusive = true)
-                    }
-                )
+                MainScaffold(navController) { modifier ->
+                    ProfileScreen(
+                        user = user,
+                        modifier = modifier,
+                        onEditProfile = {
+                            navController.navigate(NavigationRoutes.EditProfile)
+                        },
+                        onDeleteAccount = {
+                            navController.navigate(NavigationRoutes.ConfirmDelete)
+                        },
+                        onLogout = {
+                            viewModel.currentUser = null
+                            navController.popBackStack(NavigationRoutes.Welcome, inclusive = true)
+                        }
+                    )
+                }
             } else {
                 navController.navigate(NavigationRoutes.Welcome)
             }
@@ -106,13 +115,19 @@ fun NavGraph(
         }
 
         composable(NavigationRoutes.Ranking) {
-            RankingScreen(
-                rankingList = listOf(
-                    PlayerRanking("Ana", 300),
-                    PlayerRanking("Luis", 280),
-                    PlayerRanking("Carlos", 250)
+            MainScaffold(navController) { modifier ->
+                RankingScreen(
+                    navController = navController,
+                    modifier = modifier,
+                    rankingList = listOf(
+                        PlayerRanking("Ana", 300),
+                        PlayerRanking("Luis", 280),
+                        PlayerRanking("Carlos", 250),
+                        PlayerRanking("Paola", 240),
+                        PlayerRanking("David", 230)
+                    )
                 )
-            )
+            }
         }
 
         // Admin y edición de preguntas (opcional, no se elimina)

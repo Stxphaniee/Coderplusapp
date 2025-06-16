@@ -14,12 +14,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 data class PlayerRanking(val name: String, val points: Int)
 
 @Composable
 fun RankingScreen(
-    rankingList: List<PlayerRanking>
+    rankingList: List<PlayerRanking>,
+    navController: NavHostController,
+    modifier: Modifier
 ) {
     Column(
         modifier = Modifier

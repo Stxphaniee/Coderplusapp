@@ -24,7 +24,8 @@ fun ProfileScreen(
     user: User,
     onEditProfile: () -> Unit,
     onDeleteAccount: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    modifier: Modifier
 ) {
     Column(
         modifier = Modifier

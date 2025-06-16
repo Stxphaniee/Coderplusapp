@@ -1,10 +1,8 @@
 package com.pdm.saec.coderplus.ui.theme.screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,18 +14,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.pdm.saec.coderplus.R
+import com.pdm.saec.coderplus.ui.theme.components.BottomNavigationBar
 
 @Composable
-fun QuizScreen() {
+fun QuizScreen(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
     var selectedAnswer by remember { mutableStateOf(-1) }
-    var correctAnswerIndex by remember { mutableStateOf(1) }
+    val correctAnswerIndex = 1
     var lives by remember { mutableStateOf(3) }
 
     val answers = listOf("Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4")
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
@@ -38,8 +41,7 @@ fun QuizScreen() {
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Text("¡Apresúrate!!", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Text("Nivel 5", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
 
         // Vidas
         Row {
@@ -55,6 +57,14 @@ fun QuizScreen() {
             }
         }
 
+        // Número de pregunta
+        Text(
+            text = "8/10",
+            color = Color.White,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp
+        )
+
         // Pregunta
         Card(
             modifier = Modifier
@@ -64,7 +74,7 @@ fun QuizScreen() {
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
             Text(
-                text = "Pregunta random",
+                text = "Pregunta del Nivel 5",
                 modifier = Modifier.padding(24.dp),
                 fontSize = 18.sp
             )
@@ -77,8 +87,10 @@ fun QuizScreen() {
 
             OutlinedButton(
                 onClick = {
-                    selectedAnswer = index
-                    if (index != correctAnswerIndex) lives--
+                    if (selectedAnswer == -1) {
+                        selectedAnswer = index
+                        if (index != correctAnswerIndex) lives--
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -96,5 +108,9 @@ fun QuizScreen() {
                 Text(text = answer)
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        BottomNavigationBar(navController = navController)
     }
 }

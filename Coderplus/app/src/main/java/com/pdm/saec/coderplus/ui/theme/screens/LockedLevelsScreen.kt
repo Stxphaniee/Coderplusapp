@@ -15,12 +15,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.pdm.saec.coderplus.ui.theme.components.BottomNavigationBar
 
 @Composable
-fun LockedLevelsScreen(userName: String = "Joaquin", navController: NavHostController) {
+fun LockedLevelsScreen(
+    userName: String = "Joaquin",
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
@@ -66,8 +69,6 @@ fun LockedLevelsScreen(userName: String = "Joaquin", navController: NavHostContr
                 }
             }
         }
-
-        BottomNavigationBar(navController = navController, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 

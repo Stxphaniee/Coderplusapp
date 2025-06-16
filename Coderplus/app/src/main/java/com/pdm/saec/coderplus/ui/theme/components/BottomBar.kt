@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.pdm.saec.coderplus.R
 import com.pdm.saec.coderplus.navigation.NavigationRoutes
 
@@ -19,6 +20,9 @@ fun BottomNavigationBar(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val navBackStackEntry = navController.currentBackStackEntryAsState().value
+    val currentDestination = navBackStackEntry?.destination
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -27,35 +31,40 @@ fun BottomNavigationBar(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_fire),
-            contentDescription = "Progreso",
-            tint = Color.White,
-            modifier = Modifier
-                .size(28.dp)
-                .clickable {
-                    navController.navigate(NavigationRoutes.Ranking)
-                }
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_home),
+        BottomBarItem( // 🏠 Casa
+            iconRes = R.drawable.ic_home,
             contentDescription = "Inicio",
-            tint = Color.White,
-            modifier = Modifier
-                .size(28.dp)
-                .clickable {
-                    navController.navigate(NavigationRoutes.Levels)
-                }
+            isSelected = currentDestination?.route == NavigationRoutes.Levels || currentDestination?.route == NavigationRoutes.LockedLevels,
+            onClick = { navController.navigate(NavigationRoutes.Levels) }
         )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_profile),
+        BottomBarItem( // 🔥 Flama
+            iconRes = R.drawable.ic_fire,
+            contentDescription = "Progreso",
+            isSelected = currentDestination?.route == NavigationRoutes.Ranking,
+            onClick = { navController.navigate(NavigationRoutes.Ranking) }
+        )
+        BottomBarItem( // 👤 Perfil
+            iconRes = R.drawable.ic_profile,
             contentDescription = "Perfil",
-            tint = Color.White,
-            modifier = Modifier
-                .size(28.dp)
-                .clickable {
-                    navController.navigate(NavigationRoutes.Profile)
-                }
+            isSelected = currentDestination?.route == NavigationRoutes.Profile,
+            onClick = { navController.navigate(NavigationRoutes.Profile) }
         )
     }
+}
+
+@Composable
+fun BottomBarItem(
+    iconRes: Int,
+    contentDescription: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Icon(
+        painter = painterResource(id = iconRes),
+        contentDescription = contentDescription,
+        tint = if (isSelected) Color(0xFF42A5F5) else Color.White,
+        modifier = Modifier
+            .size(28.dp)
+            .clickable(onClick = onClick)
+    )
 }

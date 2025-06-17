@@ -1,13 +1,8 @@
 package com.pdm.saec.coderplus.data
 
 import retrofit2.http.GET
-import retrofit2.http.Headers
 
 interface QuizApiService {
-    @Headers(
-        "X-RapidAPI-Key: TU_API_KEY", // Reemplaza esto con tu clave real
-        "X-RapidAPI-Host: c-quiz-questions.p.rapidapi.com"
-    )
-    @GET("questions")
-    suspend fun getQuestions(): QuizResponse
+    @GET("v1/cpp_questions?count=5&difficulty_easy=true&difficulty_medium=true&difficulty_hard=true&type_multiple_choice=true")
+    suspend fun getQuestions(): List<QuizQuestion>
 }

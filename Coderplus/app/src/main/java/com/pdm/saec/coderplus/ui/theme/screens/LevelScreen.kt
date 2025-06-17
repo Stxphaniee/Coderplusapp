@@ -15,6 +15,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -22,12 +23,14 @@ import androidx.compose.ui.unit.*
 import androidx.navigation.NavHostController
 import com.pdm.saec.coderplus.R
 import com.pdm.saec.coderplus.navigation.NavigationRoutes
+import com.pdm.saec.coderplus.viewmodel.MainViewModel
 
 @Composable
 fun LevelScreen(
-    userName: String = "Joaquin",
+    userName: String = "Joaquín",
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel
 ) {
     Box(
         modifier = modifier
@@ -72,11 +75,15 @@ fun LevelScreen(
                     LevelItem(level = "Nivel 2", isCompleted = true)
                     LevelItem(level = "Nivel 3", isCompleted = true)
                     LevelItem(level = "Nivel 4", isCompleted = true)
+
+                    // 🔥 Este botón ahora accede directamente al Quiz
                     LevelItem(
                         level = "Nivel 5",
                         isCompleted = false,
                         isNext = true,
-                        onClick = { navController.navigate(NavigationRoutes.LockedLevels) }
+                        onClick = {
+                            navController.navigate(NavigationRoutes.Quiz)
+                        }
                     )
                 }
             }

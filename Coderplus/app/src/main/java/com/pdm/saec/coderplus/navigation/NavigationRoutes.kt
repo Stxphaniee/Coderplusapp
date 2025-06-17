@@ -14,6 +14,8 @@ object NavigationRoutes {
     const val SearchUser = "search_user"
     const val Levels = "levels"
     const val LockedLevels = "locked_levels"
+    const val QuizFinished = "quiz_finished"
+
 
 
 

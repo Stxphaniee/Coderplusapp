@@ -1,6 +1,5 @@
 package com.pdm.saec.coderplus.model
 
-
 data class User(
     val name: String,
     val age: Int,

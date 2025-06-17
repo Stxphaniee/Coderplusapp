@@ -1,7 +1,6 @@
 package com.pdm.saec.coderplus.ui.theme.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -14,20 +13,43 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.pdm.saec.coderplus.R
+import com.pdm.saec.coderplus.navigation.NavigationRoutes
 import com.pdm.saec.coderplus.ui.theme.components.BottomNavigationBar
+import com.pdm.saec.coderplus.viewmodel.QuizViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun QuizScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: QuizViewModel = viewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var selectedAnswer by remember { mutableStateOf(-1) }
-    val correctAnswerIndex = 1
     var lives by remember { mutableStateOf(3) }
+    var correctCount by remember { mutableStateOf(0) }
 
-    val answers = listOf("Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4")
+    LaunchedEffect(Unit) {
+        viewModel.fetchQuestions()
+    }
+
+    val questions = viewModel.questions.collectAsState().value
+    val currentIndex = viewModel.currentIndex.collectAsState().value
+
+    if (currentIndex >= questions.size && questions.isNotEmpty()) {
+        LaunchedEffect(true) {
+            navController.navigate("${NavigationRoutes.QuizFinished}/$correctCount/${questions.size}")
+        }
+        return
+    }
+
+    val currentQuestion = questions.getOrNull(currentIndex)
+    val correctAnswerIndex = currentQuestion?.options?.indexOf(currentQuestion.answer) ?: -1
+    val answers = currentQuestion?.options ?: listOf("Cargando...", "", "", "")
 
     Column(
         modifier = modifier
@@ -43,7 +65,6 @@ fun QuizScreen(
     ) {
         Text("Nivel 5", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
 
-        // Vidas
         Row {
             repeat(3) { index ->
                 val heartRes = if (index < lives) R.drawable.ic_heart else R.drawable.ic_broken_heart
@@ -57,15 +78,8 @@ fun QuizScreen(
             }
         }
 
-        // Número de pregunta
-        Text(
-            text = "8/10",
-            color = Color.White,
-            fontWeight = FontWeight.Medium,
-            fontSize = 16.sp
-        )
+        Text("Pregunta ${currentIndex + 1} / ${questions.size}", color = Color.White)
 
-        // Pregunta
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,22 +88,34 @@ fun QuizScreen(
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
             Text(
-                text = "Pregunta del Nivel 5",
+                text = currentQuestion?.question ?: "Cargando...",
                 modifier = Modifier.padding(24.dp),
                 fontSize = 18.sp
             )
         }
 
-        // Opciones
         answers.forEachIndexed { index, answer ->
             val isCorrect = selectedAnswer == correctAnswerIndex
             val isWrong = selectedAnswer == index && selectedAnswer != correctAnswerIndex
 
             OutlinedButton(
                 onClick = {
-                    if (selectedAnswer == -1) {
+                    if (selectedAnswer == -1 && currentQuestion != null) {
                         selectedAnswer = index
-                        if (index != correctAnswerIndex) lives--
+                        if (index == correctAnswerIndex) {
+                            correctCount++
+                        } else {
+                            lives--
+                            if (lives <= 0) {
+                                navController.navigate("${NavigationRoutes.QuizFinished}/$correctCount/${questions.size}")
+                                return@OutlinedButton
+                            }
+                        }
+                        coroutineScope.launch {
+                            delay(1000)
+                            selectedAnswer = -1
+                            viewModel.nextQuestion()
+                        }
                     }
                 },
                 modifier = Modifier
@@ -98,8 +124,8 @@ fun QuizScreen(
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = when {
-                        selectedAnswer == index && isCorrect -> Color(0xFF81C784) // verde
-                        selectedAnswer == index && isWrong -> Color(0xFFEF9A9A) // rojo
+                        selectedAnswer == index && isCorrect -> Color(0xFF81C784)
+                        selectedAnswer == index && isWrong -> Color(0xFFEF9A9A)
                         else -> Color(0xFF1A237E)
                     },
                     contentColor = Color.White
@@ -110,7 +136,6 @@ fun QuizScreen(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-
         BottomNavigationBar(navController = navController)
     }
 }

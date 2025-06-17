@@ -1,6 +1,5 @@
 package com.pdm.saec.coderplus.viewmodel
 
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +13,7 @@ class MainViewModel : ViewModel() {
 
     fun loginAsRegularUser() {
         currentUser = User(
-            name = "Joaquin",
+            name = "Joaquín",
             age = 25,
             country = "El Salvador",
             isAdmin = false,
@@ -28,7 +27,7 @@ class MainViewModel : ViewModel() {
             age = 30,
             country = "El Salvador",
             isAdmin = true,
-            currentLevel = 1
+            currentLevel = 10
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.pdm.saec.coderplus.ui.theme.screens
+/*package com.pdm.saec.coderplus.ui.theme.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -87,3 +87,6 @@ fun PathBetweenLockedLevels() {
         drawPath(path = path, color = Color.White, style = Stroke(width = 6f))
     }
 }
+
+
+ */

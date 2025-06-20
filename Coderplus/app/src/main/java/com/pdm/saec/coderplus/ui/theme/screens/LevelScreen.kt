@@ -1,5 +1,6 @@
 package com.pdm.saec.coderplus.ui.theme.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,6 +39,7 @@ import com.pdm.saec.coderplus.viewmodel.MainViewModel
 // import androidx.compose.ui.text.buildAnnotatedString
 // import androidx.compose.ui.text.withStyle
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun LevelScreen(
     userName: String = "Joaquín",

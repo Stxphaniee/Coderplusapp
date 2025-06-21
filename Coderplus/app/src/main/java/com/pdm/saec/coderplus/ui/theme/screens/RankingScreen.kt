@@ -24,19 +24,19 @@ import androidx.navigation.NavController // <------- Importar NavController
 
 import com.pdm.saec.coderplus.R // <------- Asegúrate de que esta importación esté correcta
 
-// <------- Clase de datos para representar a un jugador
+
 data class Player(val name: String, val points: Int, val avatar: Int)
 
 @Composable
-fun RankingScreen(navController: NavController) { // <------- Se añade NavController como parámetro
-    // <------- Lista de los 3 mejores jugadores
+fun RankingScreen(navController: NavController) {
+
     val top3 = listOf(
         Player("Alejandro", 30, R.drawable.ic_npc1),
         Player("Roberto", 45, R.drawable.ic_npc2),
         Player("Joaquin", 25, R.drawable.ic_npc3)
     )
 
-    // <------- Lista de otros jugadores para el resto del ranking
+
     val others = listOf(
         Player("Lupita", 24, R.drawable.ic_npc4),
         Player("Steven", 20, R.drawable.ic_npc5),
@@ -49,57 +49,57 @@ fun RankingScreen(navController: NavController) { // <------- Se añade NavContr
         Player("Kenia", 9, R.drawable.ic_npc4)
     )
 
-    // <------- Contenedor principal con un degradado de fondo
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFFE3F2FD), Color(0xFF90CAF9)) // <------- Degradado de azul claro a azul medio
+                    colors = listOf(Color(0xFFE3F2FD), Color(0xFF90CAF9))
                 )
             )
             .padding(16.dp)
     ) {
-        // <------- Columna principal que contiene todos los elementos de la pantalla
+
         Column(horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            // <------- Contenedor para el botón de flecha y el título "Nivel 5" (según tu ejemplo)
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween // <------- Distribuye el espacio entre los elementos
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // <------- Botón de flecha para volver atrás
+
                 IconButton(
                     onClick = {
-                        navController.popBackStack() // <------- Llama a popBackStack para volver atrás
+                        navController.popBackStack()
                     },
-                    modifier = Modifier.size(48.dp) // <------- Tamaño del área clicable del botón
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_back), // <------- ¡Aquí es donde debe existir el archivo ic_arrow_back!
+                        painter = painterResource(id = R.drawable.ic_arrow_back),
                         contentDescription = "Volver",
-                        modifier = Modifier.size(32.dp) // <------- Tamaño del icono de la flecha
+                        modifier = Modifier.size(32.dp)
                     )
                 }
-                // <------- Título del nivel
+
                 Text(
-                    "Ranking", // <------- Título "Nivel 5" según tu ejemplo
-                    fontSize = 40.sp, // <------- Tamaño de fuente grande para el título
+                    "Ranking",
+                    fontSize = 40.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0D47A1), // <------- Color de texto azul oscuro
+                    color = Color(0xFF0D47A1),
                     modifier = Modifier
-                        .weight(1f) // <------- Permite que el texto ocupe el espacio restante
-                        .wrapContentWidth(Alignment.CenterHorizontally) // <------- Centra el texto horizontalmente en su espacio
+                        .weight(1f)
+                        .wrapContentWidth(Alignment.CenterHorizontally)
                 )
-                // <------- Spacer para equilibrar el espacio del IconButton a la derecha
+
                 Spacer(modifier = Modifier.size(48.dp))
             }
 
-            // <------- Se elimina el Spacer superior original ya que la Row ahora maneja el espacio.
 
-            // <------- Fila para mostrar el tiempo de actualización (ejemplo)
+
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,14 +112,14 @@ fun RankingScreen(navController: NavController) { // <------- Se añade NavContr
                 Text("23h 10m", fontSize = 14.sp, color = Color.DarkGray)
             }
 
-            Spacer(modifier = Modifier.height(8.dp)) // <------- Espacio
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // <------- Muestra el podio con los 3 mejores jugadores
+
             Podium(top3)
 
-            Spacer(modifier = Modifier.height(16.dp)) // <------- Espacio
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // <------- Muestra el resto de los jugadores en el ranking
+
             OthersRanking(others)
         }
     }
@@ -127,30 +127,30 @@ fun RankingScreen(navController: NavController) { // <------- Se añade NavContr
 
 @Composable
 fun Podium(top3: List<Player>) {
-    // <------- Fila para organizar los elementos del podio
+
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center, // <------- Centra los elementos horizontalmente
-        verticalAlignment = Alignment.Bottom // <------- Alinea los elementos en la parte inferior
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
     ) {
-        // <------- Elementos del podio para el 2do, 1er y 3er lugar
-        PodiumItem(player = top3[0], position = 2, height = 120.dp) // <------- Jugador en posición 2
-        PodiumItem(player = top3[1], position = 1, height = 160.dp) // <------- Jugador en posición 1
-        PodiumItem(player = top3[2], position = 3, height = 100.dp) // <------- Jugador en posición 3
+
+        PodiumItem(player = top3[0], position = 2, height = 120.dp)
+        PodiumItem(player = top3[1], position = 1, height = 160.dp)
+        PodiumItem(player = top3[2], position = 3, height = 100.dp)
     }
 }
 
 @Composable
 fun PodiumItem(player: Player, position: Int, height: Dp) {
-    // <------- Colores del degradado para los bloques del podio (SIN EFECTO 3D)
-    val podiumStartColor = Color(0xFF208AEA) // <------- Azul claro del degradado
-    val podiumEndColor = Color(0xFF004482)   // <------- Azul oscuro del degradado
 
-    // <------- Ancho para los bloques del podio
-    val blockWidth = 100.dp // <------- Mantenido el ancho
+    val podiumStartColor = Color(0xFF208AEA)
+    val podiumEndColor = Color(0xFF004482)
+
+
+    val blockWidth = 100.dp
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        // <------- Imagen del avatar del jugador
+
         Image(
             painter = painterResource(id = player.avatar),
             contentDescription = "Avatar",
@@ -158,45 +158,45 @@ fun PodiumItem(player: Player, position: Int, height: Dp) {
                 .size(64.dp)
                 .clip(CircleShape)
         )
-        Spacer(modifier = Modifier.height(4.dp)) // <------- Espacio
+        Spacer(modifier = Modifier.height(4.dp))
 
-        // <------- Nombre del jugador
+
         Text(player.name, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
 
-        // <------- Contenedor para los puntos con el estilo de cuadrado redondeado
+
         Box(
             modifier = Modifier
-                .padding(top = 4.dp) // <------- Espacio superior para separar del nombre
+                .padding(top = 4.dp)
                 .background(
-                    color = Color(0xFF333760), // <------- Color de fondo #333760
-                    shape = RoundedCornerShape(25) // <------- Bordes redondeados al 25%
+                    color = Color(0xFF333760),
+                    shape = RoundedCornerShape(25)
                 )
-                .padding(horizontal = 8.dp, vertical = 4.dp), // <------- Relleno interno del Box
-            contentAlignment = Alignment.Center // <------- Centra el texto dentro del Box
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Text("${player.points} p", fontSize = 12.sp, color = Color.White) // <------- Texto de los puntos en blanco
+            Text("${player.points} p", fontSize = 12.sp, color = Color.White)
         }
 
-        Spacer(modifier = Modifier.height(6.dp)) // <------- Espacio restaurado aquí
+        Spacer(modifier = Modifier.height(6.dp))
 
-        // <------- Contenedor principal del bloque del podio (PLANO, SIN EFECTO 3D)
+
         Box(
             modifier = Modifier
-                .width(blockWidth) // <------- Ancho del bloque
-                .height(height) // <------- Altura del bloque (sin sumar alturas de biseles 3D)
+                .width(blockWidth)
+                .height(height)
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(podiumStartColor, podiumEndColor) // <------- Degradado azul del cuerpo
+                        colors = listOf(podiumStartColor, podiumEndColor)
                     )
                 ),
-            contentAlignment = Alignment.Center // <------- Centra el número de posición
+            contentAlignment = Alignment.Center
         ) {
-            // <------- Número de posición dentro del bloque (GRANDE)
+
             Text(
                 position.toString(),
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
-                fontSize = 48.sp // <------- Tamaño de fuente grande para los números
+                fontSize = 48.sp
             )
         }
     }
@@ -204,24 +204,24 @@ fun PodiumItem(player: Player, position: Int, height: Dp) {
 
 @Composable
 fun OthersRanking(players: List<Player>) {
-    // <------- Superficie para el resto del ranking con esquinas superiores redondeadas
+
     Surface(
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-        color = Color(0xFFD9D7E4), // <------- Color de fondo gris para el contenedor de la lista
+        color = Color(0xFFD9D7E4),
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        // <------- Columna perezosa para mostrar una lista desplazable de jugadores
+
         LazyColumn(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp) // <------- Espacio entre elementos de la lista
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(players.size) { index ->
                 val player = players[index]
-                // <------- Tarjeta para cada jugador en la lista
+
                 Card(
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)), // <------- Color de fondo #D9D7E4 para las tarjetas individuales
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -238,7 +238,7 @@ fun OthersRanking(players: List<Player>) {
                                 .size(40.dp)
                                 .clip(CircleShape)
                         )
-                        Spacer(modifier = Modifier.width(12.dp)) // <------- Espacio
+                        Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(player.name, fontWeight = FontWeight.SemiBold)
                             Text("${player.points} preguntas", fontSize = 12.sp, color = Color.Gray)

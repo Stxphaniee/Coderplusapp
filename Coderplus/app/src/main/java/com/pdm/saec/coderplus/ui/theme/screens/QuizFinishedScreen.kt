@@ -41,7 +41,7 @@ fun QuizFinishedScreen(
                 popUpTo(NavigationRoutes.Levels) { inclusive = true }
             }
         }) {
-            Text(text = "Volver a Niveles")
+            Text(text = "Volver a niveles")
         }
     }
 }

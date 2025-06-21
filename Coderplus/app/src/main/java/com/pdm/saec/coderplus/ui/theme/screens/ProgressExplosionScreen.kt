@@ -25,12 +25,12 @@ fun ProgressExplosionScreen(
     navController: NavController,
     onStartLesson: () -> Unit
 ) {
-    // <------- Contenedor principal con un degradado de fondo
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                // Degradado vertical: FFFFFF (blanco) arriba a 004482 (azul oscuro) abajo
+
                 Brush.verticalGradient(
                     colors = listOf(Color(0xFFFFFFFF), Color(0xFF004482))
                 )
@@ -70,7 +70,6 @@ fun ProgressExplosionScreen(
                     text = "Tienes tiempo para responder tantas preguntas como puedas. Solo cuida muy bien tus vidas porque si pierdes los 3 corazones estás fuera.",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    // Color de texto dentro del cuadro blanco: 333760
                     color = Color(0xFF333760),
                     modifier = Modifier.padding(16.dp)
                 )
@@ -92,14 +91,13 @@ fun ProgressExplosionScreen(
                 modifier = Modifier
                     .height(56.dp)
                     .width(220.dp),
-                // Color de fondo del botón "Iniciar lección": 333760
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1C2B56))
             ) {
                 Text("Iniciar sesión", fontWeight = FontWeight.Bold, fontSize = 20.sp)
             }
         }
 
-        // ✅ Conservamos la corona (Ranking)
+
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -110,7 +108,7 @@ fun ProgressExplosionScreen(
         ) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
-                color = Color(0xFF1C2B56), // Este color no se pidió cambiar, se mantiene.
+                color = Color(0xFF1C2B56),
                 shadowElevation = 6.dp
             ) {
                 Icon(

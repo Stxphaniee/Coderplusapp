@@ -32,24 +32,24 @@ fun QuizScreen(
     var lives by remember { mutableStateOf(3) }
     var correctCount by remember { mutableStateOf(0) }
 
-    // Efecto lanzado para cargar las preguntas al iniciar la pantalla
+
     LaunchedEffect(Unit) {
         viewModel.fetchQuestions()
     }
 
-    // Recolecta el estado de las preguntas y el índice actual del ViewModel
+
     val questions = viewModel.questions.collectAsState().value
     val currentIndex = viewModel.currentIndex.collectAsState().value
 
-    // Si todas las preguntas han sido respondidas, navega a la pantalla de resultados
+
     if (currentIndex >= questions.size && questions.isNotEmpty()) {
         LaunchedEffect(true) {
             navController.navigate("${NavigationRoutes.QuizFinished}/$correctCount/${questions.size}")
         }
-        return // Sale del composable para evitar renderizar contenido innecesario
+        return
     }
 
-    // Obtiene la pregunta actual y sus opciones/respuesta correcta
+
     val currentQuestion = questions.getOrNull(currentIndex)
     val correctAnswerIndex = currentQuestion?.options?.indexOf(currentQuestion.answer) ?: -1
     val answers = currentQuestion?.options ?: listOf("Respuesta 1", "Respuesta 2", "Respuesta 3","Respuesta 4")
@@ -59,20 +59,20 @@ fun QuizScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color.White, Color(0xFF004482)) // Fondo Degradado Blanco a Azul Oscuro
+                    listOf(Color.White, Color(0xFF004482))
                 )
             )
             .padding(horizontal = 16.dp, vertical = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
-        // Contenedor para el botón de flecha y el título "Nivel 5"
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Botón de flecha
+
             IconButton(
                 onClick = {
                     navController.popBackStack()
@@ -85,7 +85,7 @@ fun QuizScreen(
                     modifier = Modifier.size(32.dp)
                 )
             }
-            // Título del nivel
+
             Text(
                 "Nivel 5",
                 fontSize = 40.sp,
@@ -96,7 +96,7 @@ fun QuizScreen(
             )
             Spacer(modifier = Modifier.size(48.dp))
         }
-        // Indicador de vidas
+
         Row(
             modifier = Modifier.padding(vertical = 20.dp)
         ) {
@@ -112,7 +112,7 @@ fun QuizScreen(
             }
         }
 
-        // Tarjeta de la pregunta
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -125,7 +125,7 @@ fun QuizScreen(
                 modifier = Modifier.fillMaxSize()
                     .padding(16.dp)
             ) {
-                // Indicador de progreso de preguntas DENTRO del cuadro, arriba a la izquierda
+
                 Text(
                     text = "Pregunta ${currentIndex + 1} / ${questions.size}",
                     color = Color(0xFF333760),
@@ -135,7 +135,7 @@ fun QuizScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Adjusted to align the question text to the center vertically within the remaining space
+
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -151,7 +151,7 @@ fun QuizScreen(
 
         Spacer(modifier = Modifier.height(80.dp))
 
-        // Botones de respuesta
+
         answers.forEachIndexed { index, answer ->
             val isCorrect = selectedAnswer == correctAnswerIndex
             val isWrong = selectedAnswer == index && selectedAnswer != correctAnswerIndex
@@ -190,29 +190,29 @@ fun QuizScreen(
                     contentColor = Color.White
                 )
             ) {
-                // --------------- AÑADIDO: Fila para el Radio Button y el texto
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start // Alinea el contenido al inicio
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    RadioButton( // --------------- AÑADIDO: El Radio Button
-                        selected = (selectedAnswer == index), // Es seleccionado si 'selectedAnswer' coincide con el índice actual
+                    RadioButton(
+                        selected = (selectedAnswer == index),
                         onClick = {
-                            // La lógica de selección se maneja en el onClick del OutlinedButton principal,
-                            // pero el RadioButton necesita su propio onClick si se quiere que sea interactivo.
-                            // Sin embargo, para que el RadioButton responda al toque del botón completo,
-                            // a menudo se deja su onClick vacío o se delega al padre.
-                            // En este caso, ya tenemos la lógica en el onClick del OutlinedButton.
+
+
+
+
+
                         },
-                        colors = RadioButtonDefaults.colors( // --------------- AÑADIDO: Personaliza los colores del Radio Button
-                            selectedColor = Color.White, // Color del círculo cuando está seleccionado
-                            unselectedColor = Color.White, // Color del círculo cuando no está seleccionado
-                            disabledSelectedColor = Color.Gray, // Color si está deshabilitado y seleccionado
-                            disabledUnselectedColor = Color.Gray // Color si está deshabilitado y no seleccionado
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = Color.White,
+                            unselectedColor = Color.White,
+                            disabledSelectedColor = Color.Gray,
+                            disabledUnselectedColor = Color.Gray
                         )
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // --------------- AÑADIDO: Espacio entre el Radio Button y el texto
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = answer, fontSize = 16.sp)
                 }
             }

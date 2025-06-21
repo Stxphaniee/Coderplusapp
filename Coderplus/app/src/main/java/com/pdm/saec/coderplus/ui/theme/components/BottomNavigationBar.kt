@@ -23,7 +23,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         contentColor = Color.White,
         tonalElevation = 2.dp
     ) {
-        // 🔥 Icono -> Ranking
+
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate(route = NavigationRoutes.ProgressExplosion)},
@@ -44,7 +44,7 @@ fun BottomNavigationBar(navController: NavHostController) {
             )
         )
 
-        // 🏠 Icono -> Levels (Pantalla principal)
+
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate(NavigationRoutes.Levels) },
@@ -64,7 +64,7 @@ fun BottomNavigationBar(navController: NavHostController) {
             )
         )
 
-        // 👤 Icono -> Perfil
+
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate(NavigationRoutes.Profile) },

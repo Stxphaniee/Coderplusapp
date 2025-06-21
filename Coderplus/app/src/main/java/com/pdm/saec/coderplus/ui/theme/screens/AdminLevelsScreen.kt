@@ -30,7 +30,7 @@ fun AdminLevelsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Gestión de Niveles",
+            text = "Gestión de niveles",
             fontSize = 22.sp,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -58,7 +58,7 @@ fun AdminLevelsScreen(
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Text(
-                    text = "Editar Nivel $level",
+                    text = "Editar nivel $level",
                     modifier = Modifier.padding(16.dp),
                     color = Color.Black
                 )

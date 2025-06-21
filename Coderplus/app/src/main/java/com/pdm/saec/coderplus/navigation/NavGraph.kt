@@ -37,7 +37,7 @@ fun NavGraph(
             )
         }
 
-        // Pantalla de niveles
+
         composable(NavigationRoutes.Levels) {
             MainScaffold(navController) { modifier ->
                 LevelScreen(
@@ -48,7 +48,7 @@ fun NavGraph(
             }
         }
 
-        // Pantalla de quiz
+
         composable(NavigationRoutes.Quiz) {
             val quizViewModel: QuizViewModel = viewModel()
             QuizScreen(
@@ -122,7 +122,7 @@ fun NavGraph(
             }
         }
 
-        // Se eliminó MainScaffold para que RankingScreen no tenga BottomBar
+
         composable(NavigationRoutes.Ranking) {
             RankingScreen(navController = navController)
         }

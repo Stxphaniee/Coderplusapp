@@ -31,19 +31,19 @@ fun BottomNavigationBar(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        BottomBarItem( // 🏠 Casa
+        BottomBarItem(
             iconRes = R.drawable.ic_home,
             contentDescription = "Inicio",
             isSelected = currentDestination?.route == NavigationRoutes.Levels || currentDestination?.route == NavigationRoutes.LockedLevels,
             onClick = { navController.navigate(NavigationRoutes.Levels) }
         )
-        BottomBarItem( // 🔥 Flama
+        BottomBarItem(
             iconRes = R.drawable.ic_fire,
             contentDescription = "Progreso",
             isSelected = currentDestination?.route == NavigationRoutes.Ranking,
             onClick = { navController.navigate(NavigationRoutes.Ranking) }
         )
-        BottomBarItem( // 👤 Perfil
+        BottomBarItem(
             iconRes = R.drawable.ic_profile,
             contentDescription = "Perfil",
             isSelected = currentDestination?.route == NavigationRoutes.Profile,

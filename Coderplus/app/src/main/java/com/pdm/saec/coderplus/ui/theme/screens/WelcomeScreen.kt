@@ -43,20 +43,20 @@ fun WelcomeScreen(
             )
     ) {
 
-        //Ovalo
+
         Box(
             modifier = Modifier
-                .fillMaxWidth(2f) // Ocupa 1.5 veces el ancho del padre (la pantalla)
+                .fillMaxWidth(2f)
                 .height(700.dp)
                 .align(Alignment.TopCenter)
                 .offset(y = 260.dp)
-                .clip(RoundedCornerShape(percent = 40)) // Recorta con esquinas redondeadas al 50%
+                .clip(RoundedCornerShape(percent = 40))
                 .background(
-                    // Aquí aplicamos el difuminado
+
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFFFFFFF), Color( 0xFF004482)), // Tus dos colores: de abajo (0xFF003C90) hacia arriba (Blanco)
-                        startY = 0f, // Empieza el gradiente desde la parte inferior del óvalo (0% de la altura)
-                        endY = Float.POSITIVE_INFINITY // Termina el gradiente en la parte superior (100% de la altura)
+                        colors = listOf(Color(0xFFFFFFFF), Color( 0xFF004482)),
+                        startY = 0f,
+                        endY = Float.POSITIVE_INFINITY
                     )
                 )
         )
@@ -70,14 +70,14 @@ fun WelcomeScreen(
         ) {
             Spacer(modifier = Modifier.height(80.dp))
 
-            // Imagen del robot sin fondo
+
             Image(
                 painter = painterResource(id = R.drawable.robot),
                 contentDescription = "Bot",
                 modifier = Modifier.size(250.dp)
             )
 
-            // Título con sombra
+
             Text(
                 text = "Coder Plus",
                 fontSize = 60.sp,
@@ -98,30 +98,30 @@ fun WelcomeScreen(
                 color = Color.Black,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                fontWeight = FontWeight.Bold // Aquí se aplica la negrita
+                fontWeight = FontWeight.Bold
             )
 
-            // Este es el elemento de la separacion
-            Spacer(modifier = Modifier.height(32.dp)) // Crea un espacio vertical de 32dp
 
-            // Botón azul
+            Spacer(modifier = Modifier.height(32.dp))
+
+
             Button(
                 onClick = onStartClick,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF043D72)),
                 shape = RoundedCornerShape(50),
                 modifier = Modifier
-                    .width(250.dp) // <-- ¡Nuevo: Ancho específico! Puedes ajustar este valor.
-                    .height(48.dp) // Mantienes la altura actual o la ajustas si lo deseas.
+                    .width(250.dp)
+                    .height(48.dp)
                     .shadow(5.dp, shape = RoundedCornerShape(50)),
             ) {
-                Text(text = "¡Empieza Ahora!",
+                Text(text = "¡Empieza ahora!",
                     fontSize = 20.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
             }
 
-            // Separador
+
             Text("or",
                 fontSize = 20.sp,
                 color = Color.White,
@@ -135,8 +135,8 @@ fun WelcomeScreen(
                 shape = RoundedCornerShape(50),
                 border = BorderStroke(1.dp, Color.LightGray),
                 modifier = Modifier
-                    .width(250.dp) // <-- ¡Nuevo: Ancho específico! Puedes ajustar este valor.
-                    .height(48.dp) // Mantienes la altura actual o la ajustas si lo deseas.
+                    .width(250.dp)
+                    .height(48.dp)
             ) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = "Regístrate con Google",

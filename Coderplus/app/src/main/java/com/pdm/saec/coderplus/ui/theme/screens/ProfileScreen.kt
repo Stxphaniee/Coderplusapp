@@ -32,54 +32,54 @@ fun ProfileScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFFFFFFFF), Color(0xFF004482)) // Degradado de FFFFFF a 004482
+                    listOf(Color(0xFFFFFFFF), Color(0xFF004482))
                 )
             )
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Texto "Perfil" con color 004482
+
         Text(
             text = "Perfil",
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF004482) // Color 004482
+            color = Color(0xFF004482)
         )
 
-        // Texto "Nivel" con color 004482
+
         Text(
             text = "Nivel Actual: ${user.currentLevel}",
             fontSize = 20.sp,
-            color = Color(0xFF004482) // Color 004482
+            color = Color(0xFF004482)
         )
 
-        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre "Nivel" y la imagen del robot
+        Spacer(modifier = Modifier.height(16.dp))
 
         Image(
-            painter = painterResource(id = R.drawable.ic_camara), // usa tu imagen de avatar
+            painter = painterResource(id = R.drawable.ic_camara),
             contentDescription = "Avatar",
             modifier = Modifier
                 .size(200.dp)
                 .clip(CircleShape)
         )
 
-        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre la imagen del robot y el cuadro del nombre
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Cuadro con el nombre del usuario (anteriormente "Joaquin") movido debajo de la imagen del robot
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RoundedCornerShape(25.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) // Sombra
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = user.name, // El nombre del usuario dentro del cuadro
+                    text = user.name,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF333760)
@@ -87,18 +87,18 @@ fun ProfileScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp)) // Espacio antes de los botones
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // Definimos un tamaño fijo para los botones para que todos sean iguales
+
         val buttonSize = 140.dp
 
-        // Fila superior con "Editar Perfil" y "Borrar Datos"
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Botón "Editar Perfil"
+
             Button(
                 onClick = onEditProfile,
                 modifier = Modifier
@@ -118,7 +118,7 @@ fun ProfileScreen(
                 }
             }
 
-            // Botón "Borrar Datos"
+
             Button(
                 onClick = onDeleteAccount,
                 modifier = Modifier
@@ -141,7 +141,7 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botón "Salir" centrado abajo
+
         Button(
             onClick = onLogout,
             modifier = Modifier

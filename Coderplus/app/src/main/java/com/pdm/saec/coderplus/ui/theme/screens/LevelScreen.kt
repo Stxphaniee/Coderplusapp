@@ -34,10 +34,6 @@ import com.pdm.saec.coderplus.R
 import com.pdm.saec.coderplus.navigation.NavigationRoutes
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
 
-// Eliminadas las importaciones de AnnotatedString ya que no son necesarias para este caso
-// import androidx.compose.ui.text.SpanStyle
-// import androidx.compose.ui.text.buildAnnotatedString
-// import androidx.compose.ui.text.withStyle
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
@@ -205,7 +201,7 @@ fun LevelItem(
             style = TextStyle(
                 fontSize = 16.sp,
                 color = Color(0xFF1C2B56),
-                fontWeight = FontWeight.Bold // <--- AMBAS PALABRAS Y NUMERO EN NEGRITA
+                fontWeight = FontWeight.Bold
             ),
             modifier = Modifier
                 .padding(bottom = 4.dp)

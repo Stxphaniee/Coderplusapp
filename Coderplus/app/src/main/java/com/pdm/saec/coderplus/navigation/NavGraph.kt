@@ -122,16 +122,13 @@ fun NavGraph(
             }
         }
 
-
+        // Se eliminó MainScaffold para que RankingScreen no tenga BottomBar
         composable(NavigationRoutes.Ranking) {
-            MainScaffold(navController) { modifier ->
-                // <------- CORRECCIÓN AQUÍ: Pasar navController a RankingScreen
-                RankingScreen(navController = navController)
-            }
+            RankingScreen(navController = navController)
         }
 
         composable(NavigationRoutes.ProgressExplosion) {
-            MainScaffold(navController = navController) { modifier  ->
+            MainScaffold(navController = navController) { modifier ->
                 ProgressExplosionScreen(
                     navController = navController,
                     onStartLesson = {

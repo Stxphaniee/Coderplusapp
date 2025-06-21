@@ -18,22 +18,25 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.pdm.saec.coderplus.R
 import com.pdm.saec.coderplus.navigation.NavigationRoutes
+import kotlin.collections.listOf
 
 @Composable
 fun ProgressExplosionScreen(
     navController: NavController,
     onStartLesson: () -> Unit
 ) {
+    // <------- Contenedor principal con un degradado de fondo
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
+                // Degradado vertical: FFFFFF (blanco) arriba a 004482 (azul oscuro) abajo
                 Brush.verticalGradient(
-                    listOf(Color(0xFFE3F2FD), Color(0xFF90CAF9))
+                    colors = listOf(Color(0xFFFFFFFF), Color(0xFF004482))
                 )
             )
             .padding(16.dp)
-    ) {
+    )  {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
@@ -42,14 +45,14 @@ fun ProgressExplosionScreen(
 
             Text(
                 text = "Explosión de progreso",
-                fontSize = 24.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF0D47A1)
             )
 
             Text(
                 text = "¿Te gustan los retos, eh?",
-                fontSize = 16.sp,
+                fontSize = 20.sp,
                 color = Color(0xFF0D47A1)
             )
 
@@ -65,8 +68,10 @@ fun ProgressExplosionScreen(
             ) {
                 Text(
                     text = "Tienes tiempo para responder tantas preguntas como puedas. Solo cuida muy bien tus vidas porque si pierdes los 3 corazones estás fuera.",
-                    fontSize = 14.sp,
-                    color = Color.Black,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    // Color de texto dentro del cuadro blanco: 333760
+                    color = Color(0xFF333760),
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -74,9 +79,9 @@ fun ProgressExplosionScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.ic_camara),
+                painter = painterResource(id = R.drawable.robot_x),
                 contentDescription = "Robot",
-                modifier = Modifier.size(130.dp)
+                modifier = Modifier.size(150.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -87,9 +92,10 @@ fun ProgressExplosionScreen(
                 modifier = Modifier
                     .height(56.dp)
                     .width(220.dp),
+                // Color de fondo del botón "Iniciar lección": 333760
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1C2B56))
             ) {
-                Text("Iniciar lección", color = Color.White)
+                Text("Iniciar sesión", fontWeight = FontWeight.Bold, fontSize = 20.sp)
             }
         }
 
@@ -104,7 +110,7 @@ fun ProgressExplosionScreen(
         ) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
-                color = Color(0xFF1C2B56),
+                color = Color(0xFF1C2B56), // Este color no se pidió cambiar, se mantiene.
                 shadowElevation = 6.dp
             ) {
                 Icon(
@@ -113,12 +119,10 @@ fun ProgressExplosionScreen(
                     tint = Color.White,
                     modifier = Modifier
                         .padding(12.dp)
-                        .size(28.dp)
+                        .size(50.dp)
                 )
             }
         }
     }
     Spacer(modifier = Modifier.height(24.dp))
-
-
 }

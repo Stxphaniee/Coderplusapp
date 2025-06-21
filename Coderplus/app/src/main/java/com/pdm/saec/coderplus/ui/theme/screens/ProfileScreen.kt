@@ -1,6 +1,5 @@
 package com.pdm.saec.coderplus.ui.theme.screens
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -49,7 +48,7 @@ fun ProfileScreen(
 
         // Texto "Nivel" con color 004482
         Text(
-            text = "Nivel ${user.currentLevel}",
+            text = "Nivel Actual: ${user.currentLevel}",
             fontSize = 20.sp,
             color = Color(0xFF004482) // Color 004482
         )

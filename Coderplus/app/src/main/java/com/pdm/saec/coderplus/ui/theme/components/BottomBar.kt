@@ -26,7 +26,7 @@ fun BottomNavigationBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFF1C2B56))
+            .background(Color(0xFF333760))
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -62,7 +62,7 @@ fun BottomBarItem(
     Icon(
         painter = painterResource(id = iconRes),
         contentDescription = contentDescription,
-        tint = if (isSelected) Color(0xFF42A5F5) else Color.White,
+        tint = if (isSelected) Color(0xFF333760) else Color.White,
         modifier = Modifier
             .size(28.dp)
             .clickable(onClick = onClick)

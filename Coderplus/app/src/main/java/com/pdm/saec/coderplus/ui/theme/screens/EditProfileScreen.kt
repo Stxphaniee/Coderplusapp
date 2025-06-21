@@ -3,29 +3,29 @@ package com.pdm.saec.coderplus.ui.theme.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pdm.saec.coderplus.model.User
 
 @Composable
 fun EditProfileScreen(
-    name: String,
-    age: Int,
-    country: String,
-    onSave: (String, Int, String) -> Unit,
+    currentUser: User,
+    onSave: (User) -> Unit,
     onCancel: () -> Unit
 ) {
-    var nameState by remember { mutableStateOf(TextFieldValue(name)) }
-    var ageState by remember { mutableStateOf(TextFieldValue(age.toString())) }
-    var countryState by remember { mutableStateOf(TextFieldValue(country)) }
+    var name by remember { mutableStateOf(currentUser.name) }
+    var age by remember { mutableStateOf(currentUser.age.toString()) }
+    var country by remember { mutableStateOf(currentUser.country) }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
@@ -33,55 +33,81 @@ fun EditProfileScreen(
                     listOf(Color(0xFFBBDEFB), Color(0xFF1565C0))
                 )
             )
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        Text("Editar Perfil", fontSize = 24.sp, color = Color.White)
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        OutlinedTextField(
-            value = nameState,
-            onValueChange = { nameState = it },
-            label = { Text("Nombre") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = ageState,
-            onValueChange = { ageState = it },
-            label = { Text("Edad") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = countryState,
-            onValueChange = { countryState = it },
-            label = { Text("País") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                val parsedAge = ageState.text.toIntOrNull() ?: 0
-                onSave(nameState.text, parsedAge, countryState.text)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text("Guardar")
-        }
+            Text(
+                text = "Editar Perfil",
+                color = Color.White,
+                fontSize = 26.sp,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                tonalElevation = 8.dp,
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("Nombre") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-        TextButton(onClick = onCancel) {
-            Text("Cancelar", color = Color.White)
+                    OutlinedTextField(
+                        value = age,
+                        onValueChange = { age = it },
+                        label = { Text("Edad") },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = country,
+                        onValueChange = { country = it },
+                        label = { Text("País") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = {
+                                val updatedUser = currentUser.copy(
+                                    name = name,
+                                    age = age.toIntOrNull() ?: currentUser.age,
+                                    country = country
+                                )
+                                onSave(updatedUser)
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0))
+                        ) {
+                            Text("Guardar", color = Color.White)
+                        }
+
+                        OutlinedButton(onClick = onCancel) {
+                            Text("Cancelar")
+                        }
+                    }
+                }
+            }
         }
     }
 }

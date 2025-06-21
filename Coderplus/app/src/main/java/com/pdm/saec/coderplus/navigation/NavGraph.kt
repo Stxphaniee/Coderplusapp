@@ -1,11 +1,13 @@
 package com.pdm.saec.coderplus.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.pdm.saec.coderplus.model.User
 import com.pdm.saec.coderplus.ui.theme.components.MainScaffold
 import com.pdm.saec.coderplus.ui.theme.screens.*
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
@@ -15,12 +17,12 @@ import com.pdm.saec.coderplus.viewmodel.QuizViewModel
 fun NavGraph(
     navController: NavHostController,
     viewModel: MainViewModel,
-    quizViewModel: QuizViewModel = QuizViewModel()
 ) {
     NavHost(
         navController = navController,
         startDestination = NavigationRoutes.Welcome
     ) {
+
         composable(NavigationRoutes.Welcome) {
             WelcomeScreen(
                 onStartClick = {
@@ -35,6 +37,7 @@ fun NavGraph(
             )
         }
 
+        // Pantalla de niveles
         composable(NavigationRoutes.Levels) {
             MainScaffold(navController) { modifier ->
                 LevelScreen(
@@ -45,12 +48,15 @@ fun NavGraph(
             }
         }
 
+        // Pantalla de quiz
         composable(NavigationRoutes.Quiz) {
+            val quizViewModel: QuizViewModel = viewModel()
             QuizScreen(
                 navController = navController,
                 viewModel = quizViewModel
             )
         }
+
 
         composable(
             route = "${NavigationRoutes.QuizFinished}/{correctAnswers}/{totalQuestions}",
@@ -68,6 +74,72 @@ fun NavGraph(
                 navController = navController,
                 viewModel = viewModel
             )
+        }
+
+
+        composable(NavigationRoutes.Profile) {
+            MainScaffold(navController) { modifier ->
+                val user = viewModel.currentUser ?: User(
+                    name = "Invitado",
+                    age = 0,
+                    country = "Desconocido",
+                    isAdmin = false,
+                    currentLevel = 0
+                )
+
+                ProfileScreen(
+                    user = user,
+                    onEditProfile = {
+                        navController.navigate(NavigationRoutes.EditProfile)
+                    },
+                    onDeleteAccount = {
+                        // TODO: ConfirmDeleteDialog
+                    },
+                    onLogout = {
+                        navController.navigate(NavigationRoutes.Welcome) {
+                            popUpTo(NavigationRoutes.Welcome) { inclusive = true }
+                        }
+                    },
+                    modifier = modifier
+                )
+            }
+        }
+
+
+        composable(NavigationRoutes.EditProfile) {
+            MainScaffold(navController) { modifier ->
+                val user = viewModel.currentUser ?: return@MainScaffold
+                EditProfileScreen(
+                    currentUser = user,
+                    onSave = {
+                        viewModel.currentUser = it
+                        navController.popBackStack()
+                    },
+                    onCancel = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+        }
+
+
+        composable(NavigationRoutes.Ranking) {
+            MainScaffold(navController) { modifier ->
+                // <------- CORRECCIÓN AQUÍ: Pasar navController a RankingScreen
+                RankingScreen(navController = navController)
+            }
+        }
+
+        composable(NavigationRoutes.ProgressExplosion) {
+            MainScaffold(navController = navController) { modifier  ->
+                ProgressExplosionScreen(
+                    navController = navController,
+                    onStartLesson = {
+                        navController.navigate(NavigationRoutes.Quiz)
+                    }
+                )
+
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,59 +33,133 @@ fun ProfileScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFFBBDEFB), Color(0xFF1565C0))
+                    listOf(Color(0xFFFFFFFF), Color(0xFF004482)) // Degradado de FFFFFF a 004482
                 )
             )
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Texto "Perfil" con color 004482
+        Text(
+            text = "Perfil",
+            fontSize = 34.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF004482) // Color 004482
+        )
+
+        // Texto "Nivel" con color 004482
+        Text(
+            text = "Nivel ${user.currentLevel}",
+            fontSize = 20.sp,
+            color = Color(0xFF004482) // Color 004482
+        )
+
+        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre "Nivel" y la imagen del robot
+
         Image(
-            painter = painterResource(id = R.drawable.robot), // usa tu imagen de avatar
+            painter = painterResource(id = R.drawable.ic_camara), // usa tu imagen de avatar
             contentDescription = "Avatar",
             modifier = Modifier
-                .size(100.dp)
+                .size(200.dp)
                 .clip(CircleShape)
         )
 
+        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre la imagen del robot y el cuadro del nombre
+
+        // Cuadro con el nombre del usuario (anteriormente "Joaquin") movido debajo de la imagen del robot
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(25.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) // Sombra
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = user.name, // El nombre del usuario dentro del cuadro
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF333760)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp)) // Espacio antes de los botones
+
+        // Definimos un tamaño fijo para los botones para que todos sean iguales
+        val buttonSize = 140.dp
+
+        // Fila superior con "Editar Perfil" y "Borrar Datos"
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Botón "Editar Perfil"
+            Button(
+                onClick = onEditProfile,
+                modifier = Modifier
+                    .size(buttonSize)
+                    .padding(4.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF333760))
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_avatar_de_usuario),
+                        contentDescription = "Editar Perfil Icon",
+                        modifier = Modifier.size(50.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Editar Perfil", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
+
+            // Botón "Borrar Datos"
+            Button(
+                onClick = onDeleteAccount,
+                modifier = Modifier
+                    .size(buttonSize)
+                    .padding(4.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF333760))
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_eliminar),
+                        contentDescription = "Borrar Datos Icon",
+                        modifier = Modifier.size(50.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Borrar Datos", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = user.name,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-
-        Text(
-            text = "Nivel ${user.currentLevel}",
-            fontSize = 16.sp,
-            color = Color.White
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
+        // Botón "Salir" centrado abajo
         Button(
-            onClick = onEditProfile,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+            onClick = onLogout,
+            modifier = Modifier
+                .size(buttonSize)
+                .align(Alignment.CenterHorizontally),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF333760))
         ) {
-            Text("Editar perfil", color = Color.Black)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedButton(
-            onClick = onDeleteAccount,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
-        ) {
-            Text("Eliminar cuenta")
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextButton(onClick = onLogout) {
-            Text("Cerrar sesión", color = Color.White)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_cerrar_sesion),
+                    contentDescription = "Salir Icon",
+                    modifier = Modifier.size(50.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Salir", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            }
         }
     }
 }

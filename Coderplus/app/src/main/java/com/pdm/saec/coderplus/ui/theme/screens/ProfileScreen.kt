@@ -25,27 +25,29 @@ fun ProfileScreen(
     onEditProfile: () -> Unit,
     onDeleteAccount: () -> Unit,
     onLogout: () -> Unit,
-    modifier: Modifier
 ) {
+    val shortName = user.name
+        .split("\\s+".toRegex())
+        .take(2)
+        .joinToString(" ")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFFFFFFFF), Color(0xFF004482))
+                    listOf(Color.White, Color(0xFF004482))
                 )
             )
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             text = "Perfil",
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF004482)
         )
-
 
         Text(
             text = "Nivel Actual: ${user.currentLevel}",
@@ -65,7 +67,6 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,7 +80,7 @@ fun ProfileScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = user.name,
+                    text = shortName,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF333760)
@@ -89,16 +90,13 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-
         val buttonSize = 140.dp
-
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Button(
                 onClick = onEditProfile,
                 modifier = Modifier
@@ -117,7 +115,6 @@ fun ProfileScreen(
                     Text("Editar Perfil", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                 }
             }
-
 
             Button(
                 onClick = onDeleteAccount,
@@ -140,7 +137,6 @@ fun ProfileScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
 
         Button(
             onClick = onLogout,

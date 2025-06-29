@@ -35,10 +35,11 @@ fun QuizFinishedScreen(
         Button(onClick = {
             val current = viewModel.currentUser?.currentLevel ?: 1
             val unlocked = if (correctAnswers >= totalQuestions / 2) current + 1 else current
-            viewModel.currentUser = viewModel.currentUser?.copy(currentLevel = unlocked)
+
+            viewModel.updateUserLevel(unlocked)
 
             navController.navigate(NavigationRoutes.Levels) {
-                popUpTo(NavigationRoutes.Levels) { inclusive = true }
+                popUpTo(NavigationRoutes.Welcome) { inclusive = false }
             }
         }) {
             Text(text = "Volver a niveles")

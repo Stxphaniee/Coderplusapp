@@ -6,22 +6,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
@@ -33,37 +28,47 @@ import androidx.navigation.NavHostController
 import com.pdm.saec.coderplus.R
 import com.pdm.saec.coderplus.navigation.NavigationRoutes
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
+import com.pdm.saec.coderplus.viewmodel.QuizViewModel
+import kotlinx.coroutines.launch
 
+data class LevelData(
+    val number: Int,
+    val isCompleted: Boolean,
+    val name: String,
+    val isNext: Boolean = false
+)
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun LevelScreen(
-    userName: String = "Joaquín",
     navController: NavHostController,
-    modifier: Modifier = Modifier,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    quizViewModel: QuizViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val levels = listOf(
-        LevelData(1, true, "Nivel 1"),
-        LevelData(2, true, "Nivel 2"),
-        LevelData(3, true, "Nivel 3"),
-        LevelData(4, true, "Nivel 4"),
-        LevelData(5, false, "Nivel 5", isNext = true),
-        LevelData(6, false, "Nivel 6"),
-        LevelData(7, false, "Nivel 7"),
-        LevelData(8, false, "Nivel 8"),
-        LevelData(9, false, "Nivel 9"),
-        LevelData(10, false, "Nivel 10"),
-        LevelData(11, false, "Nivel 11"),
-        LevelData(12, false, "Nivel 12"),
-        LevelData(13, false, "Nivel 13"),
-        LevelData(14, false, "Nivel 14"),
-        LevelData(15, false, "Nivel 15"),
-        LevelData(16, false, "Nivel 16")
-    )
+    val user = viewModel.currentUser
+    val displayName = remember(user) {
+        user?.name
+            ?.substringBefore(" ")
+            ?.takeIf { it.isNotBlank() }
+            ?: user?.email?.substringBefore("@")
+            ?: "Invitado"
+    }
+    val unlockedLevel = user?.currentLevel ?: 1
+
+    val totalLevels = 16
+    val levels = remember(unlockedLevel) {
+        (1..totalLevels).map { lvl ->
+            LevelData(
+                number = lvl,
+                isCompleted = lvl < unlockedLevel,
+                isNext = lvl == unlockedLevel,
+                name = "Nivel $lvl"
+            )
+        }
+    }
 
     Box(
-        modifier = modifier
+        Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
@@ -72,108 +77,94 @@ fun LevelScreen(
             )
     ) {
         Column(
-            modifier = Modifier
+            Modifier
                 .fillMaxSize()
                 .padding(top = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Bienvenido $userName",
+                "Bienvenido $displayName",
                 style = TextStyle(
                     fontSize = 35.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF003366),
-                    shadow = Shadow(color = Color.Gray, offset = Offset(1f, 1f), blurRadius = 1f)
+                    shadow = Shadow(Color.Gray, Offset(1f,1f), 1f)
                 )
             )
             Text(
-                text = "¿Qué te gustaría aprender el día de hoy?",
+                "¿Qué te gustaría aprender el día de hoy?",
                 style = TextStyle(fontSize = 17.sp, color = Color(0xFF003366))
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
             BoxWithConstraints(
-                modifier = Modifier
+                Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 40.dp)
             ) {
-                val levelPositionsMap = remember { mutableStateOf(mutableMapOf<Int, Offset>()) }
+                val levelPositions = remember { mutableStateOf(mutableMapOf<Int, Offset>()) }
+                val itemSizeDp = 80.dp
+                val itemSizePx = with(LocalDensity.current) { itemSizeDp.toPx() }
 
-                val levelItemSizeDp = 60.dp
-                val levelItemSizePx = with(LocalDensity.current) { levelItemSizeDp.toPx() }
-
-                Canvas(modifier = Modifier.matchParentSize()) {
+                Canvas(Modifier.matchParentSize()) {
                     val path = Path()
-                    for (i in 0 until levels.size - 1) {
-                        val startLevelPos = levelPositionsMap.value[i]
-                        val endLevelPos = levelPositionsMap.value[i + 1]
-
-                        if (startLevelPos != null && endLevelPos != null) {
-                            val startPoint = Offset(startLevelPos.x, startLevelPos.y + levelItemSizePx / 2)
-                            val endPoint = Offset(endLevelPos.x, endLevelPos.y - levelItemSizePx / 2)
-
-                            path.moveTo(startPoint.x, startPoint.y)
-
-                            val controlPoint1 = Offset(startPoint.x, startPoint.y + (endPoint.y - startPoint.y) * 0.3f)
-                            val controlPoint2 = Offset(endPoint.x, endPoint.y - (endPoint.y - startPoint.y) * 0.7f)
-
-                            path.cubicTo(
-                                x1 = controlPoint1.x, y1 = controlPoint1.y,
-                                x2 = controlPoint2.x, y2 = controlPoint2.y,
-                                x3 = endPoint.x, y3 = endPoint.y
-                            )
+                    levels.forEachIndexed { idx, _ ->
+                        val start = levelPositions.value[idx]
+                        val end = levelPositions.value[idx + 1]
+                        if (start != null && end != null) {
+                            val p1 = Offset(start.x, start.y + itemSizePx / 2)
+                            val p4 = Offset(end.x, end.y - itemSizePx / 2)
+                            path.moveTo(p1.x, p1.y)
+                            val cp1 = Offset(p1.x, p1.y + (p4.y - p1.y) * 0.3f)
+                            val cp2 = Offset(p4.x, p4.y - (p4.y - p1.y) * 0.3f)
+                            path.cubicTo(cp1.x, cp1.y, cp2.x, cp2.y, p4.x, p4.y)
                         }
                     }
-
                     drawPath(
                         path = path,
                         color = Color.White.copy(alpha = 0.7f),
-                        style = Stroke(
-                            width = 12f,
-                            cap = StrokeCap.Round
-                        )
+                        style = Stroke(width = 12f, cap = StrokeCap.Round)
                     )
                 }
 
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Transparent),
+                    Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(50.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    levels.forEachIndexed { index, level ->
-                        val itemAlignment = when (index % 4) {
+                    val coroutine = rememberCoroutineScope()
+                    levels.forEachIndexed { idx, level ->
+                        val align = when (idx % 4) {
                             0 -> Alignment.CenterHorizontally
                             1 -> Alignment.End
                             2 -> Alignment.CenterHorizontally
                             3 -> Alignment.Start
                             else -> Alignment.CenterHorizontally
                         }
-
                         LevelItem(
                             levelNumber = level.number,
+                            levelName = level.name,
                             isCompleted = level.isCompleted,
                             isNext = level.isNext,
-                            levelName = level.name,
                             modifier = Modifier
-                                .align(itemAlignment)
-                                .onGloballyPositioned { coordinates ->
-                                    val centerX = coordinates.positionInParent().x + coordinates.size.width / 2f
-                                    val centerY = coordinates.positionInParent().y + coordinates.size.height / 2f
-                                    levelPositionsMap.value[index] = Offset(centerX, centerY)
+                                .align(align)
+                                .onGloballyPositioned { coords ->
+                                    val x = coords.positionInParent().x + coords.size.width / 2f
+                                    val y = coords.positionInParent().y + coords.size.height / 2f
+                                    levelPositions.value[idx] = Offset(x, y)
                                 },
                             onClick = {
                                 if (level.isNext) {
-                                    navController.navigate(NavigationRoutes.Quiz)
+                                    coroutine.launch {
+                                        quizViewModel.fetchQuestions(level.number)
+                                        navController.navigate("${NavigationRoutes.Quiz}/${level.number}")
+                                    }
                                 }
                             }
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(Modifier.height(24.dp))
                 }
             }
         }
@@ -189,15 +180,14 @@ fun LevelItem(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null
 ) {
-    val cornerRadius = 25.dp
-    val levelBoxSize = 80.dp
-
+    val radius = 25.dp
+    val sizeDp = 80.dp
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
         Text(
-            text = levelName,
+            levelName,
             style = TextStyle(
                 fontSize = 16.sp,
                 color = Color(0xFF1C2B56),
@@ -205,43 +195,28 @@ fun LevelItem(
             ),
             modifier = Modifier
                 .padding(bottom = 4.dp)
-                .background(Color(0xFFFFFFFF), shape = RoundedCornerShape(8.dp))
+                .background(Color.White, RoundedCornerShape(8.dp))
                 .padding(horizontal = 12.dp, vertical = 4.dp)
         )
-
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(levelBoxSize)
-                .shadow(8.dp, shape = RoundedCornerShape(cornerRadius))
-                .background(Color(0xFF1C2B56), shape = RoundedCornerShape(cornerRadius))
-                .let { if (onClick != null) it.clickable { onClick() } else it },
-            contentAlignment = Alignment.Center
+                .size(sizeDp)
+                .shadow(8.dp, RoundedCornerShape(radius))
+                .background(Color(0xFF1C2B56), RoundedCornerShape(radius))
+                .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
         ) {
-            val iconResourceId = when {
+            val icon = when {
                 isCompleted -> R.drawable.ic_check
                 isNext -> R.drawable.ic_play
                 else -> R.drawable.ic_lock
             }
-
             Image(
-                painter = painterResource(id = iconResourceId),
+                painter = painterResource(icon),
                 contentDescription = null,
                 modifier = Modifier.size(45.dp),
-                contentScale = ContentScale.Fit,
                 colorFilter = ColorFilter.tint(Color.White)
             )
         }
     }
-}
-
-data class LevelData(
-    val number: Int,
-    val isCompleted: Boolean,
-    val name: String,
-    val isNext: Boolean = false
-)
-
-@Composable
-fun PathBetweenLevels() {
-    // Eliminado
 }

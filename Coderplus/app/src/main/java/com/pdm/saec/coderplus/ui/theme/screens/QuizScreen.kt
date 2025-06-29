@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun QuizScreen(
     navController: NavHostController,
+    level: Int,
     modifier: Modifier = Modifier,
     viewModel: QuizViewModel = viewModel()
 ) {
@@ -32,100 +33,81 @@ fun QuizScreen(
     var lives by remember { mutableStateOf(3) }
     var correctCount by remember { mutableStateOf(0) }
 
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchQuestions()
+    LaunchedEffect(level, Unit) {
+        viewModel.fetchQuestions(level)
     }
 
+    val questions by viewModel.questions.collectAsState()
+    val currentIndex by viewModel.currentIndex.collectAsState()
 
-    val questions = viewModel.questions.collectAsState().value
-    val currentIndex = viewModel.currentIndex.collectAsState().value
-
-
-    if (currentIndex >= questions.size && questions.isNotEmpty()) {
-        LaunchedEffect(true) {
+    if (questions.isNotEmpty() && currentIndex >= questions.size) {
+        LaunchedEffect(Unit) {
             navController.navigate("${NavigationRoutes.QuizFinished}/$correctCount/${questions.size}")
         }
         return
     }
 
-
     val currentQuestion = questions.getOrNull(currentIndex)
-    val correctAnswerIndex = currentQuestion?.options?.indexOf(currentQuestion.answer) ?: -1
-    val answers = currentQuestion?.options ?: listOf("Respuesta 1", "Respuesta 2", "Respuesta 3","Respuesta 4")
+    val answers = currentQuestion?.options ?: emptyList()
+    val correctAnswerIndex = currentQuestion
+        ?.options
+        ?.indexOf(currentQuestion.answer) ?: -1
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color.White, Color(0xFF004482))
-                )
-            )
+            .background(Brush.verticalGradient(listOf(Color.White, Color(0xFF004482))))
             .padding(horizontal = 16.dp, vertical = 60.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-
-        ) {
-
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-            IconButton(
-                onClick = {
-                    navController.popBackStack()
-                },
-                modifier = Modifier.size(48.dp)
-            ) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_back),
                     contentDescription = "Volver",
                     modifier = Modifier.size(32.dp)
                 )
             }
-
             Text(
-                "Nivel 5",
+                "Nivel $level",
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF333760),
                 modifier = Modifier.weight(1f)
                     .wrapContentWidth(Alignment.CenterHorizontally)
             )
-            Spacer(modifier = Modifier.size(48.dp))
+            Spacer(Modifier.size(48.dp))
         }
 
-        Row(
-            modifier = Modifier.padding(vertical = 20.dp)
-        ) {
-            repeat(3) { index ->
-                val heartRes = if (index < lives) R.drawable.ic_heart else R.drawable.ic_broken_heart
+        Row(modifier = Modifier.padding(vertical = 20.dp)) {
+            repeat(3) { idx ->
+                val icon = if (idx < lives) R.drawable.ic_heart else R.drawable.ic_broken_heart
                 Icon(
-                    painter = painterResource(id = heartRes),
-                    contentDescription = "Vida",
+                    painter = painterResource(id = icon),
+                    contentDescription = null,
                     modifier = Modifier.size(50.dp),
                     tint = Color.Red
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(Modifier.width(4.dp))
             }
         }
-
-
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .heightIn(min = 200.dp)
                 .padding(2.dp),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
-                    .padding(16.dp)
-            ) {
-
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(16.dp)) {
                 Text(
                     text = "Pregunta ${currentIndex + 1} / ${questions.size}",
                     color = Color(0xFF333760),
@@ -133,13 +115,11 @@ fun QuizScreen(
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.align(Alignment.Start)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-
-
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+                Spacer(Modifier.height(8.dp))
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    , contentAlignment = Alignment.Center) {
                     Text(
                         text = currentQuestion?.question ?: "Cargando pregunta...",
                         fontSize = 18.sp,
@@ -149,20 +129,22 @@ fun QuizScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(Modifier.height(80.dp))
 
-
-        answers.forEachIndexed { index, answer ->
-            val isCorrect = selectedAnswer == correctAnswerIndex
-            val isWrong = selectedAnswer == index && selectedAnswer != correctAnswerIndex
+        answers.forEachIndexed { idx, answer ->
+            val isCorrect = idx == correctAnswerIndex
+            val isWrong = selectedAnswer == idx && !isCorrect
+            val bgColor = when {
+                selectedAnswer == idx && isCorrect -> Color(0xFF81C784)
+                isWrong -> Color(0xFFEF9A9A)
+                else -> Color(0xFF333661)
+            }
 
             OutlinedButton(
                 onClick = {
                     if (selectedAnswer == -1 && currentQuestion != null) {
-                        selectedAnswer = index
-                        if (index == correctAnswerIndex) {
-                            correctCount++
-                        } else {
+                        selectedAnswer = idx
+                        if (isCorrect) correctCount++ else {
                             lives--
                             if (lives <= 0) {
                                 navController.navigate("${NavigationRoutes.QuizFinished}/$correctCount/${questions.size}")
@@ -172,49 +154,31 @@ fun QuizScreen(
                         coroutineScope.launch {
                             delay(1000)
                             selectedAnswer = -1
-                            viewModel.nextQuestion()
+                            if (currentIndex == questions.lastIndex) {
+                                navController.navigate("${NavigationRoutes.QuizFinished}/$correctCount/${questions.size}")
+                            } else {
+                                viewModel.nextQuestion()
+                            }
                         }
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .height(60.dp),
+                    .heightIn(min = 60.dp)
+                    .padding(vertical = 8.dp),
                 shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = when {
-                        selectedAnswer == index && isCorrect -> Color(0xFF81C784)
-                        selectedAnswer == index && isWrong -> Color(0xFFEF9A9A)
-                        else -> Color(0xFF333661)
-                    },
+                    containerColor = bgColor,
                     contentColor = Color.White
                 )
             ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    RadioButton(
-                        selected = (selectedAnswer == index),
-                        onClick = {
-
-
-
-
-
-                        },
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = Color.White,
-                            unselectedColor = Color.White,
-                            disabledSelectedColor = Color.Gray,
-                            disabledUnselectedColor = Color.Gray
-                        )
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = answer, fontSize = 16.sp)
-                }
+                RadioButton(
+                    selected = (selectedAnswer == idx),
+                    onClick = null,
+                    colors = RadioButtonDefaults.colors(selectedColor = Color.White)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(answer, fontSize = 16.sp)
             }
         }
     }

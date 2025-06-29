@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pdm.saec.coderplus.R
@@ -34,16 +35,14 @@ fun EditProfileScreen(
     val dataFieldBackgroundColor = Color(0xFF333760)
     val dataFieldContentColor = Color.White
 
-    val labelCardBackgroundColor =
-        Color.White
-    val labelCardContentColor = Color(0xFF333760)
+    val labelTextColor = Color(0xFF333760)
+    val labelCardBackgroundColor = Color.White
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-
                     listOf(Color(0xFFFFFFFF), Color(0xFF004482))
                 )
             )
@@ -60,109 +59,64 @@ fun EditProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-
-        Image(
-            painter = painterResource(id = R.drawable.ic_camara),
-            contentDescription = "Avatar",
+        Row(
             modifier = Modifier
-                .size(200.dp)
-                .clip(CircleShape)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-
-        @Composable
-        fun LabeledInputField(
-            label: String,
-            value: String,
-            onValueChange: (String) -> Unit,
-            keyboardType: KeyboardType = KeyboardType.Text,
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-            Card(
+            Image(
+                painter = painterResource(id = R.drawable.ic_camara),
+                contentDescription = "Avatar",
                 modifier = Modifier
-                    .width(100.dp)
-                    .height(35.dp)
-                    .align(Alignment.Start)
-                    .offset(x = 16.dp),
-                shape = RoundedCornerShape(
-                    topStart = 12.dp,
-                    topEnd = 12.dp,
-                    bottomStart = 0.dp,
-                    bottomEnd = 0.dp
-                ),
-                colors = CardDefaults.cardColors(containerColor = labelCardBackgroundColor),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = label,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = labelCardContentColor
-                    )
-                }
-            }
-
-
-            OutlinedTextField(
-                value = value,
-                onValueChange = onValueChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .offset(y = (-5).dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = dataFieldBackgroundColor,
-                    unfocusedContainerColor = dataFieldBackgroundColor,
-                    disabledContainerColor = dataFieldBackgroundColor,
-                    errorContainerColor = dataFieldBackgroundColor,
-
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color.White,
-                    disabledBorderColor = Color.LightGray,
-                    errorBorderColor = Color.Red,
-
-                    cursorColor = dataFieldContentColor,
-                    focusedLabelColor = Color.Transparent,
-                    unfocusedLabelColor = Color.Transparent,
-                    focusedTextColor = dataFieldContentColor,
-                    unfocusedTextColor = dataFieldContentColor
-                ),
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType)
+                    .size(200.dp)
+                    .clip(CircleShape)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            LabeledInputField(
+                label = "Edad:",
+                value = age,
+                onValueChange = { newAge ->
+                    if (newAge.all { it.isDigit() } || newAge.isEmpty()) {
+                        age = newAge
+                    }
+                },
+                modifier = Modifier.weight(1f),
+                keyboardType = KeyboardType.Number,
+                // Pasar colores aquí para que LabeledInputField pueda usarlos
+                dataFieldBackgroundColor = dataFieldBackgroundColor,
+                dataFieldContentColor = dataFieldContentColor,
+                labelTextColor = labelTextColor,
+                labelCardBackgroundColor = labelCardBackgroundColor
+            )
         }
 
+        Spacer(modifier = Modifier.height(32.dp))
 
         LabeledInputField(
             label = "Nombre:",
             value = name,
-            onValueChange = { name = it }
+            onValueChange = { name = it },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            // Pasar colores aquí
+            dataFieldBackgroundColor = dataFieldBackgroundColor,
+            dataFieldContentColor = dataFieldContentColor,
+            labelTextColor = labelTextColor,
+            labelCardBackgroundColor = labelCardBackgroundColor
         )
-
-
-        LabeledInputField(
-            label = "Edad:",
-            value = age,
-            onValueChange = { newAge ->
-                if (newAge.all { it.isDigit() } || newAge.isEmpty()) {
-                    age = newAge
-                }
-            },
-            keyboardType = KeyboardType.Number
-        )
-
 
         LabeledInputField(
             label = "País:",
             value = country,
-            onValueChange = { country = it }
+            onValueChange = { country = it },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            // Pasar colores aquí
+            dataFieldBackgroundColor = dataFieldBackgroundColor,
+            dataFieldContentColor = dataFieldContentColor,
+            labelTextColor = labelTextColor,
+            labelCardBackgroundColor = labelCardBackgroundColor
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -171,7 +125,98 @@ fun EditProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+            Button(
+                onClick = onCancel,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                shape = RoundedCornerShape(28.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(56.dp)
+                    .padding(end = 8.dp)
+            ) {
+                Text("Cancelar", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            }
+            Button(
+                onClick = {
+                    val updatedUser = currentUser.copy(
+                        name = name,
+                        age = age,
+                        country = country
+                    )
+                    onSave(updatedUser)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF004482)),
+                shape = RoundedCornerShape(28.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(56.dp)
+                    .padding(start = 8.dp)
+            ) {
+                Text("Guardar", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            }
         }
     }
 }
 
+@Composable
+fun LabeledInputField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    dataFieldBackgroundColor: Color,
+    dataFieldContentColor: Color,
+    labelTextColor: Color,
+    labelCardBackgroundColor: Color
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Card(
+            modifier = Modifier
+                .wrapContentWidth(align = Alignment.Start)
+                .padding(bottom = 4.dp),
+            shape = RoundedCornerShape(percent = 50),
+            colors = CardDefaults.cardColors(containerColor = labelCardBackgroundColor),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Text(
+                text = label,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = labelTextColor,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+            )
+        }
+
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = dataFieldBackgroundColor,
+                unfocusedContainerColor = dataFieldBackgroundColor,
+                disabledContainerColor = dataFieldBackgroundColor,
+                errorContainerColor = dataFieldBackgroundColor,
+
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                disabledBorderColor = Color.Transparent,
+                errorBorderColor = Color.Transparent,
+
+                cursorColor = dataFieldContentColor,
+                focusedLabelColor = Color.Transparent,
+                unfocusedLabelColor = Color.Transparent,
+                focusedTextColor = dataFieldContentColor,
+                unfocusedTextColor = dataFieldContentColor
+            ),
+            shape = RoundedCornerShape(percent = 50),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
+            singleLine = true,
+            visualTransformation = visualTransformation
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}

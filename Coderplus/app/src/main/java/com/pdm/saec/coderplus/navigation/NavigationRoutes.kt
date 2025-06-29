@@ -17,4 +17,5 @@ object NavigationRoutes {
     const val AdminLevels = "admin_levels"
     const val AddEditQuestion = "add_edit_question"
     const val SearchUser = "search_user"
+    const val Registro = "registro"
 }

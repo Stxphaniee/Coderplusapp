@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.pdm.saec.coderplus.data.AuthService
 import com.pdm.saec.coderplus.model.User
 import kotlinx.coroutines.launch
+
 class MainViewModel : ViewModel() {
 
     var currentUser by mutableStateOf<User?>(null)
@@ -97,6 +98,15 @@ class MainViewModel : ViewModel() {
         }
     }
 
-   // fun loginAsRegularUser() { /* ... */ }
-   // fun loginAsAdmin()       { /* ... */ }
+    fun deleteAccount(onComplete: () -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.delete()?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                currentUser = null
+                onComplete()
+            } else {
+                // Opcional: puedes añadir logs o feedback
+            }
+        }
+    }
 }

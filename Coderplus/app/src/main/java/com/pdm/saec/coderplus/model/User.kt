@@ -7,5 +7,6 @@ data class User(
     val isAdmin: Boolean = false,
     val currentLevel: Int = 1,
     val email: String,
-    val password: String
+    val password: String,
+    val puntos: Int = 0
 )

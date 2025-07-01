@@ -21,10 +21,10 @@ import com.pdm.saec.coderplus.model.User
 import com.pdm.saec.coderplus.navigation.NavigationRoutes
 
 @Composable
-fun ProgressExplosionScreen(
+fun ProgressExplosionWithUserScreen(
     navController: NavController,
-    user: User,
-    onStartLesson: () -> Unit
+    onStartLesson: () -> Unit,
+    user: User
 ) {
     Box(
         modifier = Modifier
@@ -50,48 +50,43 @@ fun ProgressExplosionScreen(
             )
 
             Text(
-                text = "¿Te gustan los retos, eh?",
+                text = "¡Mira tus puntos acumulados!",
                 fontSize = 20.sp,
                 color = Color(0xFF0D47A1)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "${user.puntos} pts",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF0D47A1)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                shadowElevation = 8.dp,
-                color = Color.White,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(0.95f)
-            ) {
-                Text(
-                    text = "Tienes tiempo para responder tantas preguntas como puedas. Solo cuida muy bien tus vidas porque si pierdes los 3 corazones estás fuera.",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF333760),
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-
             Spacer(modifier = Modifier.height(24.dp))
 
-            Image(
-                painter = painterResource(id = R.drawable.robot_x),
-                contentDescription = "Robot",
-                modifier = Modifier.size(150.dp)
-            )
+            // CARD DE PUNTOS
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(6.dp),
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)
+                    .padding(16.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Tus puntos actuales",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF1C2B56)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "${user.puntos} pts",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF0D47A1)
+                    )
+                }
+            }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = onStartLesson,
@@ -105,6 +100,7 @@ fun ProgressExplosionScreen(
             }
         }
 
+        // Botón para ir al ranking
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)

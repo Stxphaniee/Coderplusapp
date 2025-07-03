@@ -40,6 +40,31 @@ class MainViewModel : ViewModel() {
             )
         }
     }
+    fun updateProfile(
+        name: String,
+        age: String,
+        country: String,
+        onComplete: (Boolean, String?) -> Unit
+    ) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid == null) {
+            onComplete(false, "Usuario no autenticado")
+            return
+        }
+        viewModelScope.launch {
+            try {
+                AuthService.updateUserProfile(uid, name, age, country)
+                currentUser = currentUser?.copy(
+                    name    = name,
+                    age     = age,
+                    country = country
+                )
+                onComplete(true, null)
+            } catch (e: Exception) {
+                onComplete(false, e.message)
+            }
+        }
+    }
 
     fun updateUserLevel(newLevel: Int) {
         val user = currentUser ?: return

@@ -15,6 +15,12 @@ import com.pdm.saec.coderplus.ui.theme.screens.*
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
 import com.pdm.saec.coderplus.viewmodel.QuizViewModel
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 
 @Composable
 fun NavGraph(
@@ -129,18 +135,24 @@ fun NavGraph(
         }
 
         composable(NavigationRoutes.EditProfile) {
-            MainScaffold(navController) {
-                val user = viewModel.currentUser ?: return@MainScaffold
-                EditProfileScreen(
-                    currentUser = user,
-                    onSave = {
-                        viewModel.currentUser = it
-                        navController.popBackStack()
-                    },
-                    onCancel = { navController.popBackStack() }
-                )
+            MainScaffold(navController) { contentModifier ->
+                val user = viewModel.currentUser
+                if (user != null) {
+                    Box(modifier = contentModifier.fillMaxSize()) {
+                        EditProfileScreen(
+                            viewModel   = viewModel,
+                            currentUser = user,
+                            onCancel    = { navController.popBackStack() }
+                        )
+                    }
+                } else {
+                    Box(modifier = contentModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
             }
         }
+
 
         composable(NavigationRoutes.Ranking) {
             RankingScreen(navController)

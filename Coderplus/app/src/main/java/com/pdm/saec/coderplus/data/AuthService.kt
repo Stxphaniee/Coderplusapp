@@ -11,17 +11,6 @@ import kotlinx.coroutines.tasks.await
 import kotlin.jvm.java
 import kotlin.text.orEmpty
 import kotlin.to
-
-//data class UserProfile(
-//    val email: String = "",
-//    val name: String = "",
-//    val age: String = "",
-//    val country: String = "",
-//    val currentLevel: Int = 1,
-//    val points: Int = 0,
-//    val progress: Map<String, Int> = emptyMap(),
-//    val isAdmin: Boolean = false
-
 data class UserProfile(
     val email: kotlin.String = "",
     val name: kotlin.String = "",

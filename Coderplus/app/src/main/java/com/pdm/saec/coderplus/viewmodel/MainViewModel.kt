@@ -13,7 +13,6 @@ import com.pdm.saec.coderplus.data.AuthService
 import com.pdm.saec.coderplus.model.User
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
@@ -28,17 +27,17 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             val profile = AuthService.getUserProfile(firebaseUser.uid)
             currentUser = User(
-                name         = profile.name.takeIf { it.isNotBlank() }
+                name = profile.name.takeIf { it.isNotBlank() }
                     ?: firebaseUser.displayName.orEmpty()
                         .substringBefore("@"),
-                age          = profile.age,
-                country      = profile.country,
-                isAdmin      = profile.isAdmin,
+                age = profile.age,
+                country = profile.country,
+                isAdmin = profile.isAdmin,
                 currentLevel = profile.currentLevel,
-                email        = firebaseUser.email.orEmpty(),
-                password     = "",
-                puntos       = profile.points,
-                avatarUrl    = profile.avatarUrl
+                email = firebaseUser.email.orEmpty(),
+                password = "",
+                puntos = profile.points,
+                avatarUrl = profile.avatarUrl
             )
         }
     }
@@ -71,8 +70,8 @@ class MainViewModel : ViewModel() {
                 }
                 AuthService.updateUserProfileMap(uid, updates)
                 currentUser = currentUser?.copy(
-                    name    = name,
-                    age     = age,
+                    name = name,
+                    age = age,
                     country = country,
                 )
                 onComplete(true, null)
@@ -125,9 +124,9 @@ class MainViewModel : ViewModel() {
             try {
                 val firebaseUser = AuthService.signUpWithEmail(email, password)
                 AuthService.updateUserProfile(
-                    uid     = firebaseUser.uid,
-                    name    = name,
-                    age     = age,
+                    uid = firebaseUser.uid,
+                    name = name,
+                    age = age,
                     country = country
                 )
                 onAuthSuccess(firebaseUser)
@@ -167,18 +166,6 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             AuthService.updateUserPoints(uid, newTotal)
             currentUser = user.copy(puntos = newTotal)
-        }
-    }
-
-    fun deleteAccount(onComplete: () -> Unit) {
-        val user = FirebaseAuth.getInstance().currentUser
-        user?.delete()?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                currentUser = null
-                onComplete()
-            } else {
-                // Opcional: puedes añadir logs o feedback
-            }
         }
     }
 }

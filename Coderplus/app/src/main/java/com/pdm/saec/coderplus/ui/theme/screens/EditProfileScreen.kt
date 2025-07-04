@@ -3,7 +3,7 @@ package com.pdm.saec.coderplus.ui.theme.screens
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.Image
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,16 +43,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.pdm.saec.coderplus.R
 import com.pdm.saec.coderplus.model.User
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
 
 
 @Composable
@@ -74,12 +70,15 @@ fun EditProfileScreen(
     ) { uri: Uri? ->
         selectedImageUri = uri
         uri?.let {
-            // asíncrono: sube a Firebase Storage y guarda URL en Firestore
             isUploading = true
             viewModel.uploadAvatar(it) { success, errorMsg ->
                 isUploading = false
                 if (!success) {
-                    Toast.makeText(context, errorMsg ?: "Error subiendo la imagen", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        errorMsg ?: "Error subiendo la imagen",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -88,8 +87,8 @@ fun EditProfileScreen(
 
     val dataFieldBg = Color(0xFF333760)
     val dataFieldFg = Color.White
-    val labelFg     = Color(0xFF333760)
-    val labelBg     = Color.White
+    val labelFg = Color(0xFF333760)
+    val labelBg = Color.White
 
     Column(
         modifier = Modifier
@@ -125,6 +124,7 @@ fun EditProfileScreen(
                             color = Color.White
                         )
                     }
+
                     selectedImageUri != null -> {
                         AsyncImage(
                             model = selectedImageUri,
@@ -134,6 +134,7 @@ fun EditProfileScreen(
                                 .clip(CircleShape)
                         )
                     }
+
                     else -> AsyncImage(
                         model = currentUser.avatarUrl.takeIf { !it.isNullOrBlank() },
                         placeholder = painterResource(R.drawable.ic_camara),
@@ -158,8 +159,8 @@ fun EditProfileScreen(
                 modifier = Modifier.weight(1f),
                 keyboardType = KeyboardType.Number,
                 dataFieldBackgroundColor = dataFieldBg,
-                dataFieldContentColor    = dataFieldFg,
-                labelTextColor           = labelFg,
+                dataFieldContentColor = dataFieldFg,
+                labelTextColor = labelFg,
                 labelCardBackgroundColor = labelBg
             )
         }
@@ -174,8 +175,8 @@ fun EditProfileScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             dataFieldBackgroundColor = dataFieldBg,
-            dataFieldContentColor    = dataFieldFg,
-            labelTextColor           = labelFg,
+            dataFieldContentColor = dataFieldFg,
+            labelTextColor = labelFg,
             labelCardBackgroundColor = labelBg
         )
 
@@ -187,8 +188,8 @@ fun EditProfileScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             dataFieldBackgroundColor = dataFieldBg,
-            dataFieldContentColor    = dataFieldFg,
-            labelTextColor           = labelFg,
+            dataFieldContentColor = dataFieldFg,
+            labelTextColor = labelFg,
             labelCardBackgroundColor = labelBg
         )
 
@@ -207,7 +208,12 @@ fun EditProfileScreen(
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
             ) {
-                Text("Cancelar", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(
+                    "Cancelar",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
             }
             Button(
                 onClick = {
@@ -238,7 +244,12 @@ fun EditProfileScreen(
                 if (isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Color.White)
                 } else {
-                    Text("Guardar", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(
+                        "Guardar",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                 }
             }
         }
@@ -285,41 +296,16 @@ fun LabeledInputField(
                 focusedContainerColor = dataFieldBackgroundColor,
                 unfocusedContainerColor = dataFieldBackgroundColor,
                 disabledContainerColor = dataFieldBackgroundColor,
-                errorContainerColor    = dataFieldBackgroundColor,
-                focusedBorderColor     = Color.Transparent,
-                unfocusedBorderColor   = Color.Transparent,
-                disabledBorderColor    = Color.Transparent,
-                errorBorderColor       = Color.Transparent,
-                cursorColor            = dataFieldContentColor,
-                focusedTextColor       = dataFieldContentColor,
-                unfocusedTextColor     = dataFieldContentColor
+                errorContainerColor = dataFieldBackgroundColor,
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                disabledBorderColor = Color.Transparent,
+                errorBorderColor = Color.Transparent,
+                cursorColor = dataFieldContentColor,
+                focusedTextColor = dataFieldContentColor,
+                unfocusedTextColor = dataFieldContentColor
             )
         )
         Spacer(Modifier.height(16.dp))
-    }
-}
-
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
-@Composable
-fun EditProfileScreenPreview() {
-    val vm: MainViewModel = remember { MainViewModel() }
-    val fakeUser = User(
-        name = "John Doe",
-        age = "25",
-        country = "Perú",
-        isAdmin = false,
-        currentLevel = 1,
-        email = "john.doe@example.com",
-        password = "",
-        puntos = 0
-    )
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
-        EditProfileScreen(
-            viewModel = vm,
-            currentUser = fakeUser,
-            onCancel = { /* nada */ }
-        )
     }
 }

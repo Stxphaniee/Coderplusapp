@@ -2,11 +2,28 @@ package com.pdm.saec.coderplus.ui.theme.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,17 +41,16 @@ import com.pdm.saec.coderplus.model.User
 fun ProfileScreen(
     user: User,
     onEditProfile: () -> Unit,
-    onDeleteAccount: () -> Unit,  // Será llamado cuando confirmen el borrado
+    onDeleteAccount: () -> Unit,
     onLogout: () -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
 
-    // 1) Si showDeleteDialog == true, mostramos el AlertDialog
     if (showDeleteDialog) {
         DeleteAccountScreen(
             onAccountDeleted = {
                 showDeleteDialog = false
-                onDeleteAccount()   // Aquí se dispara la navegación a ConfirmDelete
+                onDeleteAccount()
             },
             onCancel = {
                 showDeleteDialog = false
@@ -42,7 +58,6 @@ fun ProfileScreen(
         )
     }
 
-    // 2) Resto de UI de perfil intacta
     val shortName = user.name
         .split("\\s+".toRegex())
         .take(2)
@@ -124,7 +139,6 @@ fun ProfileScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Editar perfil
             Button(
                 onClick = onEditProfile,
                 modifier = Modifier
@@ -149,7 +163,6 @@ fun ProfileScreen(
                 }
             }
 
-            // Borrar datos: sólo abre el diálogo
             Button(
                 onClick = { showDeleteDialog = true },
                 modifier = Modifier
@@ -177,7 +190,6 @@ fun ProfileScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        // Cerrar sesión
         Button(
             onClick = onLogout,
             modifier = Modifier

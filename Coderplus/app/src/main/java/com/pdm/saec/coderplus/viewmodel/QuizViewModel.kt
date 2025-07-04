@@ -18,7 +18,6 @@ class QuizViewModel : ViewModel() {
     val currentIndex: StateFlow<Int> = _currentIndex
 
     private val _correctCount = MutableStateFlow(0)
-    val correctCount: StateFlow<Int> = _correctCount
     fun fetchQuestions(level: Int) {
         viewModelScope.launch {
             try {
@@ -34,7 +33,7 @@ class QuizViewModel : ViewModel() {
                         val answers = rq.answers ?: return@mapNotNull null
                         if (answers.size < 2) return@mapNotNull null
 
-                        val text    = rq.question.text
+                        val text = rq.question.text
                         val options = answers.mapNotNull { it.answer }
                         if (options.size < 2) return@mapNotNull null
 
@@ -42,18 +41,18 @@ class QuizViewModel : ViewModel() {
                             ?: options.first()
                         QuizQuestionUI(
                             question = text,
-                            options  = options,
-                            answer   = correct
+                            options = options,
+                            answer = correct
                         )
                     }
                     .shuffled()
-                _questions.value    = uiList
+                _questions.value = uiList
                 _currentIndex.value = 0
                 _correctCount.value = 0
 
             } catch (e: Exception) {
                 e.printStackTrace()
-                _questions.value    = emptyList()
+                _questions.value = emptyList()
                 _currentIndex.value = 0
                 _correctCount.value = 0
             }
@@ -66,12 +65,4 @@ class QuizViewModel : ViewModel() {
         }
     }
 
-    fun addCorrect() {
-        _correctCount.value += 1
-    }
-
-    fun resetQuiz() {
-        _currentIndex.value = 0
-        _correctCount.value = 0
-    }
 }

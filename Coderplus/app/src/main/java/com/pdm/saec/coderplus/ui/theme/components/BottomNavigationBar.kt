@@ -3,7 +3,9 @@ package com.pdm.saec.coderplus.ui.theme.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.*
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +28,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate(route = NavigationRoutes.ProgressExplosion)},
+            onClick = { navController.navigate(route = NavigationRoutes.ProgressExplosion) },
 
             icon = {
                 Image(

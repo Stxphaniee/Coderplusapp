@@ -1,19 +1,19 @@
 package com.pdm.saec.coderplus.data
 
 data class RemoteQuizQuestion(
-    val id: kotlin.Int,
-    val topic: kotlin.String,
-    val type: kotlin.String,
-    val difficulty: kotlin.String,
+    val id: Int,
+    val topic: String,
+    val type: String,
+    val difficulty: String,
     val question: QuestionObj,
-    val answers: kotlin.collections.List<AnswerObj>
+    val answers: List<AnswerObj>
 )
 
-data class QuestionObj(val text: kotlin.String)
-data class AnswerObj(val answer: kotlin.String, val correct: kotlin.Boolean? = false)
+data class QuestionObj(val text: String)
+data class AnswerObj(val answer: String, val correct: Boolean? = false)
 
 data class QuizQuestionUI(
-    val question: kotlin.String,
-    val options: kotlin.collections.List<kotlin.String>,
-    val answer: kotlin.String
+    val question: String,
+    val options: List<String>,
+    val answer: String
 )

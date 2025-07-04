@@ -1,11 +1,30 @@
 package com.pdm.saec.coderplus.ui.theme.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -28,13 +47,13 @@ fun Registro(
     viewModel: MainViewModel = viewModel(),
     onCancel: () -> Unit
 ) {
-    var name      by remember { mutableStateOf("") }
-    var age       by remember { mutableStateOf("") }
-    var country   by remember { mutableStateOf("") }
-    var email     by remember { mutableStateOf("") }
-    var password  by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf("") }
+    var country by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    var errorMsg  by remember { mutableStateOf<String?>(null) }
+    var errorMsg by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -67,7 +86,6 @@ fun Registro(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                // label flotante
                 Card(
                     modifier = Modifier
                         .wrapContentWidth()
@@ -92,13 +110,13 @@ fun Registro(
                         .fillMaxWidth()
                         .height(56.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor   = Color(0xFF333760),
+                        focusedContainerColor = Color(0xFF333760),
                         unfocusedContainerColor = Color(0xFF333760),
-                        cursorColor             = Color.White,
-                        focusedTextColor        = Color.White,
-                        unfocusedTextColor      = Color.White,
-                        focusedBorderColor      = Color.Transparent,
-                        unfocusedBorderColor    = Color.Transparent
+                        cursorColor = Color.White,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent
                     ),
                     shape = RoundedCornerShape(percent = 50),
                     singleLine = true,
@@ -110,10 +128,15 @@ fun Registro(
             }
         }
 
-        LabeledInputField("Nombre:",     name,     { name = it })
-        LabeledInputField("Edad:",       age,      { if (it.all(Char::isDigit)) age = it }, keyboardType = KeyboardType.Number)
-        LabeledInputField("País:",       country,  { country = it })
-        LabeledInputField("Correo:",     email,    { email = it },     keyboardType = KeyboardType.Email)
+        LabeledInputField("Nombre:", name, { name = it })
+        LabeledInputField(
+            "Edad:",
+            age,
+            { if (it.all(Char::isDigit)) age = it },
+            keyboardType = KeyboardType.Number
+        )
+        LabeledInputField("País:", country, { country = it })
+        LabeledInputField("Correo:", email, { email = it }, keyboardType = KeyboardType.Email)
         LabeledInputField(
             label = "Contraseña:",
             value = password,

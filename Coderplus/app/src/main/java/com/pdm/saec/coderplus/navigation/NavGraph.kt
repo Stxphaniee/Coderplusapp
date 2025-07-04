@@ -19,7 +19,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.pdm.saec.coderplus.model.User
 import com.pdm.saec.coderplus.ui.theme.components.MainScaffold
-import com.pdm.saec.coderplus.ui.theme.screens.*
+import com.pdm.saec.coderplus.ui.theme.screens.ConfirmDeleteScreen
+import com.pdm.saec.coderplus.ui.theme.screens.DeleteAccountScreen
+import com.pdm.saec.coderplus.ui.theme.screens.EditProfileScreen
+import com.pdm.saec.coderplus.ui.theme.screens.LevelScreen
+import com.pdm.saec.coderplus.ui.theme.screens.ProfileScreen
+import com.pdm.saec.coderplus.ui.theme.screens.ProgressExplosionScreen
+import com.pdm.saec.coderplus.ui.theme.screens.QuizFinishedScreen
+import com.pdm.saec.coderplus.ui.theme.screens.QuizScreen
+import com.pdm.saec.coderplus.ui.theme.screens.RankingScreen
+import com.pdm.saec.coderplus.ui.theme.screens.Registro
+import com.pdm.saec.coderplus.ui.theme.screens.WelcomeScreen
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
 import com.pdm.saec.coderplus.viewmodel.QuizViewModel
 import com.pdm.saec.coderplus.viewmodel.RankingViewModel
@@ -34,7 +44,6 @@ fun NavGraph(
         navController = navController,
         startDestination = NavigationRoutes.Welcome
     ) {
-        // --- Welcome ---
         composable(NavigationRoutes.Welcome) {
             val ctx = LocalContext.current
             WelcomeScreen(
@@ -45,24 +54,23 @@ fun NavGraph(
                                 popUpTo(NavigationRoutes.Welcome) { inclusive = true }
                             }
                         } else {
-                            Toast.makeText(ctx, error ?: "Error desconocido", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(ctx, error ?: "Error desconocido", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 },
-                onRegister   = { navController.navigate(NavigationRoutes.Registro) },
-                onGoogleClick= onGoogleSignIn,
+                onRegister = { navController.navigate(NavigationRoutes.Registro) },
+                onGoogleClick = onGoogleSignIn,
                 navController = navController
             )
         }
 
-        // --- Levels ---
         composable(NavigationRoutes.Levels) {
             MainScaffold(navController) {
                 LevelScreen(navController = navController, viewModel = mainViewModel)
             }
         }
 
-        // --- Quiz por nivel ---
         composable(
             route = "${NavigationRoutes.Quiz}/{level}",
             arguments = listOf(navArgument("level") { type = NavType.IntType })
@@ -76,21 +84,20 @@ fun NavGraph(
             QuizScreen(navController = navController, level = lvl, viewModel = quizVm)
         }
 
-        // --- Quiz terminado ---
         composable(
             route = "${NavigationRoutes.QuizFinished}/{correctAnswers}/{totalQuestions}",
             arguments = listOf(
                 navArgument("correctAnswers") { type = NavType.IntType },
-                navArgument("totalQuestions")  { type = NavType.IntType }
+                navArgument("totalQuestions") { type = NavType.IntType }
             )
         ) { back ->
             val correct = back.arguments?.getInt("correctAnswers") ?: 0
-            val total   = back.arguments?.getInt("totalQuestions")  ?: 0
+            val total = back.arguments?.getInt("totalQuestions") ?: 0
             QuizFinishedScreen(
-                correctAnswers  = correct,
-                totalQuestions  = total,
-                navController   = navController,
-                viewModel       = mainViewModel
+                correctAnswers = correct,
+                totalQuestions = total,
+                navController = navController,
+                viewModel = mainViewModel
             )
         }
 
@@ -110,9 +117,9 @@ fun NavGraph(
                     Box(modifier = contentModifier.fillMaxSize()) {
                         ProfileScreen(
                             user = user,
-                            onEditProfile   = { navController.navigate(NavigationRoutes.EditProfile) },
+                            onEditProfile = { navController.navigate(NavigationRoutes.EditProfile) },
                             onDeleteAccount = { navController.navigate(NavigationRoutes.ConfirmDelete) },
-                            onLogout        = {
+                            onLogout = {
                                 mainViewModel.signOut()
                                 navController.navigate(NavigationRoutes.Welcome) {
                                     popUpTo(0)
@@ -127,15 +134,12 @@ fun NavGraph(
         composable(NavigationRoutes.DeleteAccount) {
             DeleteAccountScreen(
                 onAccountDeleted = {
-                    // 1) Cierra la sesión
                     mainViewModel.signOut()
-                    // 2) Reemplaza esta ruta por la de ConfirmDelete
                     navController.navigate(NavigationRoutes.ConfirmDelete) {
                         popUpTo(NavigationRoutes.DeleteAccount) { inclusive = true }
                     }
                 },
                 onCancel = {
-                    // Si el usuario cancela, simplemente regresa a Profile
                     navController.popBackStack()
                 }
             )
@@ -155,9 +159,9 @@ fun NavGraph(
                     }
                 } else {
                     EditProfileScreen(
-                        viewModel   = mainViewModel,
+                        viewModel = mainViewModel,
                         currentUser = user,
-                        onCancel    = { navController.popBackStack() }
+                        onCancel = { navController.popBackStack() }
                     )
                 }
             }
@@ -172,12 +176,14 @@ fun NavGraph(
         composable(NavigationRoutes.ProgressExplosion) {
             MainScaffold(navController) {
                 val user = mainViewModel.currentUser
-                    ?: User( name="", age="", country="", isAdmin=false,
-                        currentLevel=1, puntos=0, email="", password="")
+                    ?: User(
+                        name = "", age = "", country = "", isAdmin = false,
+                        currentLevel = 1, puntos = 0, email = "", password = ""
+                    )
                 ProgressExplosionScreen(
-                    navController   = navController,
-                    user            = user,
-                    onStartLesson   = { navController.navigate("${NavigationRoutes.Quiz}/1") }
+                    navController = navController,
+                    user = user,
+                    onStartLesson = { navController.navigate("${NavigationRoutes.Quiz}/1") }
                 )
             }
         }
@@ -185,8 +191,8 @@ fun NavGraph(
         composable(NavigationRoutes.Registro) {
             Registro(
                 navController = navController,
-                viewModel     = mainViewModel,
-                onCancel      = { navController.popBackStack() }
+                viewModel = mainViewModel,
+                onCancel = { navController.popBackStack() }
             )
         }
     }

@@ -18,9 +18,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun ConfirmDeleteScreen(navController: NavController) {
     LaunchedEffect(Unit) {
-        delay(2000) // Espera 2 segundos
+        delay(2000)
         navController.navigate(NavigationRoutes.Welcome) {
-            popUpTo(0) // Limpia el backstack completo
+            popUpTo(0)
         }
     }
 

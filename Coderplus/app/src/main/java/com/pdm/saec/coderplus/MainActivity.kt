@@ -6,19 +6,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.material3.Surface
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.pdm.saec.coderplus.data.AuthService
 import com.pdm.saec.coderplus.navigation.NavGraph
 import com.pdm.saec.coderplus.navigation.NavigationRoutes
 import com.pdm.saec.coderplus.ui.theme.CoderplusTheme
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
-import androidx.compose.material3.Surface
-import androidx.compose.ui.graphics.Color
 
 class MainActivity : ComponentActivity() {
 
@@ -45,9 +45,9 @@ class MainActivity : ComponentActivity() {
                 Surface(color = Color.White) {
                     navController = rememberNavController()
                     NavGraph(
-                        navController   = navController,
-                        mainViewModel   = viewModel,
-                        onGoogleSignIn  = {
+                        navController = navController,
+                        mainViewModel = viewModel,
+                        onGoogleSignIn = {
                             googleSignInLauncher.launch(googleClient.signInIntent)
                         }
                     )
@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
         }
 
     }
+
     private fun handleSignInResult(data: Intent?) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         try {

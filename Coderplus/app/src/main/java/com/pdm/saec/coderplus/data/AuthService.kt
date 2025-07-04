@@ -18,7 +18,8 @@ data class UserProfile(
     val country: kotlin.String = "",
     val currentLevel: kotlin.Int = 1,
     val isAdmin: kotlin.Boolean = false,
-    val points: kotlin.Int = 0
+    val points: kotlin.Int = 0,
+    val avatarUrl: kotlin.String? = null
 )
 
 
@@ -44,9 +45,15 @@ object AuthService {
     suspend fun signInWithEmail(email: kotlin.String, pass: kotlin.String): FirebaseUser {
         val result = auth.signInWithEmailAndPassword(email, pass).await()
         val user = result.user!!
-        // tras email login, aseguramos el perfil también:
         ensureUserDoc(user.uid, email)
         return user
+    }
+
+    suspend fun updateUserProfileMap(uid: String, updates: Map<String, Any>) {
+        firestore.collection("users")
+            .document(uid)
+            .set(updates, SetOptions.merge())
+            .await()
     }
 
     fun signOut() = auth.signOut()
@@ -66,6 +73,12 @@ object AuthService {
         )
     }
 
+    suspend fun updateUserAvatarUrl(uid: String, avatarUrl: String) {
+        firestore.collection("users")
+            .document(uid)
+            .update("avatarUrl", avatarUrl)
+            .await()
+    }
     private suspend fun ensureUserDoc(uid: kotlin.String, email: kotlin.String) {
         val ref = firestore.collection("users").document(uid)
         val snap = ref.get().await()

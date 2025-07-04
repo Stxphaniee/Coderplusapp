@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.pdm.saec.coderplus.R
 import com.pdm.saec.coderplus.model.User
 
@@ -57,13 +58,24 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Image(
-            painter = painterResource(id = R.drawable.ic_camara),
-            contentDescription = "Avatar",
-            modifier = Modifier
-                .size(200.dp)
-                .clip(CircleShape)
-        )
+        val avatar = user.avatarUrl
+        if (!avatar.isNullOrBlank()) {
+            AsyncImage(
+                model = avatar,
+                contentDescription = "Avatar",
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape)
+            )
+        } else {
+            Image(
+                painter = painterResource(R.drawable.ic_camara),
+                contentDescription = "Avatar por defecto",
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

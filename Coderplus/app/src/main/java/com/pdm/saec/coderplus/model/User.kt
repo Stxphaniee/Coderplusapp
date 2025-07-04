@@ -8,5 +8,6 @@ data class User(
     val currentLevel: Int = 1,
     val email: String,
     val password: String,
-    val puntos: Int = 0
+    val puntos: Int = 0,
+    val avatarUrl: String? = null,
 )

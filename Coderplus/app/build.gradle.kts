@@ -69,4 +69,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     implementation("androidx.fragment:fragment-ktx:1.6.0")
+    implementation("com.google.firebase:firebase-storage-ktx:21.0.2")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

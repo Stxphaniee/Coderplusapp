@@ -1,9 +1,13 @@
 package com.pdm.saec.coderplus.ui.theme.screens
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,11 +43,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.pdm.saec.coderplus.R
 import com.pdm.saec.coderplus.model.User
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
 
 
 @Composable
@@ -57,6 +66,25 @@ fun EditProfileScreen(
     var age by remember { mutableStateOf(currentUser.age) }
     var country by remember { mutableStateOf(currentUser.country) }
     var isSaving by remember { mutableStateOf(false) }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var isUploading by remember { mutableStateOf(false) }
+
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        selectedImageUri = uri
+        uri?.let {
+            // asíncrono: sube a Firebase Storage y guarda URL en Firestore
+            isUploading = true
+            viewModel.uploadAvatar(it) { success, errorMsg ->
+                isUploading = false
+                if (!success) {
+                    Toast.makeText(context, errorMsg ?: "Error subiendo la imagen", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
     val dataFieldBg = Color(0xFF333760)
     val dataFieldFg = Color.White
@@ -83,13 +111,41 @@ fun EditProfileScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_camara),
-                contentDescription = "Avatar",
+            Box(
                 modifier = Modifier
                     .size(200.dp)
                     .clip(CircleShape)
-            )
+                    .background(Color.LightGray)
+                    .clickable { pickImageLauncher.launch("image/*") }
+            ) {
+                when {
+                    isUploading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(48.dp),
+                            color = Color.White
+                        )
+                    }
+                    selectedImageUri != null -> {
+                        AsyncImage(
+                            model = selectedImageUri,
+                            contentDescription = "Avatar seleccionado",
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clip(CircleShape)
+                        )
+                    }
+                    else -> AsyncImage(
+                        model = currentUser.avatarUrl.takeIf { !it.isNullOrBlank() },
+                        placeholder = painterResource(R.drawable.ic_camara),
+                        error = painterResource(R.drawable.ic_camara),
+                        contentDescription = "Avatar por defecto",
+                        modifier = Modifier
+                            .matchParentSize()
+                            .clip(CircleShape)
+                    )
+                }
+            }
+            Spacer(Modifier.height(32.dp))
             Spacer(Modifier.width(16.dp))
             LabeledInputField(
                 label = "Edad:",
@@ -157,16 +213,17 @@ fun EditProfileScreen(
                 onClick = {
                     isSaving = true
                     viewModel.updateProfile(
-                        name    = name,
-                        age     = age,
-                        country = country
-                    ) { success, errorMsg ->
+                        name = name,
+                        age = age,
+                        country = country,
+                        avatarUri = selectedImageUri
+                    ) { success, err ->
                         isSaving = false
                         if (success) {
                             Toast.makeText(context, "Perfil actualizado", Toast.LENGTH_SHORT).show()
                             onCancel()
                         } else {
-                            Toast.makeText(context, errorMsg ?: "Error al guardar", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, err ?: "Error", Toast.LENGTH_SHORT).show()
                         }
                     }
                 },
@@ -239,5 +296,30 @@ fun LabeledInputField(
             )
         )
         Spacer(Modifier.height(16.dp))
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Composable
+fun EditProfileScreenPreview() {
+    val vm: MainViewModel = remember { MainViewModel() }
+    val fakeUser = User(
+        name = "John Doe",
+        age = "25",
+        country = "Perú",
+        isAdmin = false,
+        currentLevel = 1,
+        email = "john.doe@example.com",
+        password = "",
+        puntos = 0
+    )
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ){
+        EditProfileScreen(
+            viewModel = vm,
+            currentUser = fakeUser,
+            onCancel = { /* nada */ }
+        )
     }
 }

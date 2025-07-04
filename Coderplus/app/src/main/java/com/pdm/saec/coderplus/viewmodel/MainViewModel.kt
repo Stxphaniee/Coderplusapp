@@ -13,6 +13,7 @@ import com.pdm.saec.coderplus.data.AuthService
 import com.pdm.saec.coderplus.model.User
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
@@ -158,6 +159,17 @@ class MainViewModel : ViewModel() {
             } catch (e: Exception) {
                 onResult(false, e.message)
             }
+        }
+    }
+
+    fun addPoints(pointsToAdd: Int) {
+        val user = currentUser ?: return
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val newTotal = user.puntos + pointsToAdd
+
+        viewModelScope.launch {
+            AuthService.updateUserPoints(uid, newTotal)
+            currentUser = user.copy(puntos = newTotal)
         }
     }
 

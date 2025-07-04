@@ -122,14 +122,15 @@ private fun Podium(top3: List<PlayerRanking>) {
         verticalAlignment = Alignment.Bottom
     ) {
         if (top3.size >= 3) {
-            PodiumItem(top3[0], position = 2, height = 120.dp)
+            PodiumItem(top3[1], position = 2, height = 120.dp)
             Spacer(Modifier.width(16.dp))
-            PodiumItem(top3[1], position = 1, height = 160.dp)
+            PodiumItem(top3[0], position = 1, height = 160.dp)
             Spacer(Modifier.width(16.dp))
             PodiumItem(top3[2], position = 3, height = 100.dp)
         }
     }
 }
+
 
 @Composable
 private fun PodiumItem(

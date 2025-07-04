@@ -33,11 +33,15 @@ fun QuizFinishedScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(onClick = {
-            val current = viewModel.currentUser?.currentLevel ?: 1
-            val unlocked = if (correctAnswers >= totalQuestions / 2) current + 1 else current
+            val currentLevel = viewModel.currentUser?.currentLevel ?: 1
+            val passed = correctAnswers >= (totalQuestions + 1) / 2
+            val unlocked = if (passed) currentLevel + 1 else currentLevel
 
-            viewModel.updateUserLevel(unlocked)
-
+            if (passed) {
+                val gained = 100 + correctAnswers * 50
+                viewModel.addPoints(gained)
+                viewModel.updateUserLevel(unlocked)
+            }
             navController.navigate(NavigationRoutes.Levels) {
                 popUpTo(NavigationRoutes.Welcome) { inclusive = false }
             }
@@ -46,3 +50,4 @@ fun QuizFinishedScreen(
         }
     }
 }
+

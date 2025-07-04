@@ -17,10 +17,11 @@ import com.pdm.saec.coderplus.viewmodel.QuizViewModel
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import com.pdm.saec.coderplus.viewmodel.RankingViewModel
+import androidx.compose.runtime.getValue
 
 @Composable
 fun NavGraph(
@@ -155,7 +156,12 @@ fun NavGraph(
 
 
         composable(NavigationRoutes.Ranking) {
-            RankingScreen(navController)
+            val rankingVm: RankingViewModel = viewModel()
+            val players by rankingVm.players.collectAsState()
+            RankingScreen(
+                navController = navController,
+                players       = players
+            )
         }
 
         composable(NavigationRoutes.ProgressExplosion) {

@@ -11,6 +11,7 @@ object NavigationRoutes {
 
     const val Profile = "profile"
     const val EditProfile = "edit_profile"
+    const val DeleteAccount = "delete_account"
     const val ConfirmDelete = "confirm_delete"
 
     const val Ranking = "ranking"

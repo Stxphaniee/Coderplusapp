@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,9 +24,25 @@ import com.pdm.saec.coderplus.model.User
 fun ProfileScreen(
     user: User,
     onEditProfile: () -> Unit,
-    onDeleteAccount: () -> Unit,
-    onLogout: () -> Unit,
+    onDeleteAccount: () -> Unit,  // Será llamado cuando confirmen el borrado
+    onLogout: () -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    // 1) Si showDeleteDialog == true, mostramos el AlertDialog
+    if (showDeleteDialog) {
+        DeleteAccountScreen(
+            onAccountDeleted = {
+                showDeleteDialog = false
+                onDeleteAccount()   // Aquí se dispara la navegación a ConfirmDelete
+            },
+            onCancel = {
+                showDeleteDialog = false
+            }
+        )
+    }
+
+    // 2) Resto de UI de perfil intacta
     val shortName = user.name
         .split("\\s+".toRegex())
         .take(2)
@@ -37,7 +53,7 @@ fun ProfileScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color.White, Color(0xFF004482))
+                    colors = listOf(Color.White, Color(0xFF004482))
                 )
             )
             .padding(24.dp),
@@ -56,12 +72,11 @@ fun ProfileScreen(
             color = Color(0xFF004482)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
-        val avatar = user.avatarUrl
-        if (!avatar.isNullOrBlank()) {
+        if (!user.avatarUrl.isNullOrBlank()) {
             AsyncImage(
-                model = avatar,
+                model = user.avatarUrl,
                 contentDescription = "Avatar",
                 modifier = Modifier
                     .size(200.dp)
@@ -77,7 +92,7 @@ fun ProfileScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
         Card(
             modifier = Modifier
@@ -88,7 +103,7 @@ fun ProfileScreen(
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -100,7 +115,7 @@ fun ProfileScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(Modifier.height(32.dp))
 
         val buttonSize = 140.dp
 
@@ -109,6 +124,7 @@ fun ProfileScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Editar perfil
             Button(
                 onClick = onEditProfile,
                 modifier = Modifier
@@ -123,13 +139,19 @@ fun ProfileScreen(
                         contentDescription = "Editar Perfil Icon",
                         modifier = Modifier.size(50.dp)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Editar Perfil", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Editar Perfil",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
                 }
             }
 
+            // Borrar datos: sólo abre el diálogo
             Button(
-                onClick = onDeleteAccount,
+                onClick = { showDeleteDialog = true },
                 modifier = Modifier
                     .size(buttonSize)
                     .padding(4.dp),
@@ -142,14 +164,20 @@ fun ProfileScreen(
                         contentDescription = "Borrar Datos Icon",
                         modifier = Modifier.size(50.dp)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Borrar Datos", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Borrar Datos",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
+        // Cerrar sesión
         Button(
             onClick = onLogout,
             modifier = Modifier
@@ -164,8 +192,13 @@ fun ProfileScreen(
                     contentDescription = "Salir Icon",
                     modifier = Modifier.size(50.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Salir", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Salir",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
             }
         }
     }

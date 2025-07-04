@@ -19,33 +19,30 @@ class MainViewModel : ViewModel() {
 
     var currentUser by mutableStateOf<User?>(null)
 
+    init {
+        FirebaseAuth.getInstance().currentUser
+            ?.let { onAuthSuccess(it) }
+    }
+
     fun onAuthSuccess(firebaseUser: FirebaseUser) {
         viewModelScope.launch {
             val profile = AuthService.getUserProfile(firebaseUser.uid)
-            val nameFromFirestore = profile.name.takeIf { it.isNotBlank() }
-            val nameFromGoogle    = firebaseUser.displayName?.takeIf { it.isNotBlank() }
-            val fallbackEmailName = firebaseUser.email
-                ?.substringBefore("@")
-                ?.takeIf { it.isNotBlank() }
-
-            val displayName = nameFromFirestore
-                ?: nameFromGoogle
-                ?: fallbackEmailName
-                ?: "Invitado"
-
             currentUser = User(
-                name         = displayName,
+                name         = profile.name.takeIf { it.isNotBlank() }
+                    ?: firebaseUser.displayName.orEmpty()
+                        .substringBefore("@"),
                 age          = profile.age,
                 country      = profile.country,
                 isAdmin      = profile.isAdmin,
                 currentLevel = profile.currentLevel,
                 email        = firebaseUser.email.orEmpty(),
                 password     = "",
-                puntos = profile.points,
-                avatarUrl = profile.avatarUrl
+                puntos       = profile.points,
+                avatarUrl    = profile.avatarUrl
             )
         }
     }
+
 
     fun updateProfile(
         name: String,

@@ -1,7 +1,15 @@
 package com.pdm.saec.coderplus.navigation
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -14,174 +22,162 @@ import com.pdm.saec.coderplus.ui.theme.components.MainScaffold
 import com.pdm.saec.coderplus.ui.theme.screens.*
 import com.pdm.saec.coderplus.viewmodel.MainViewModel
 import com.pdm.saec.coderplus.viewmodel.QuizViewModel
-import android.widget.Toast
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import com.pdm.saec.coderplus.viewmodel.RankingViewModel
-import androidx.compose.runtime.getValue
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    viewModel: MainViewModel,
+    mainViewModel: MainViewModel,
     onGoogleSignIn: () -> Unit
 ) {
     NavHost(
         navController = navController,
         startDestination = NavigationRoutes.Welcome
     ) {
-
+        // --- Welcome ---
         composable(NavigationRoutes.Welcome) {
-            val context = LocalContext.current
+            val ctx = LocalContext.current
             WelcomeScreen(
                 onEmailLogin = { email, pass ->
-                    viewModel.loginWithEmail(email, pass) { success, error ->
+                    mainViewModel.loginWithEmail(email, pass) { success, error ->
                         if (success) {
                             navController.navigate(NavigationRoutes.Levels) {
                                 popUpTo(NavigationRoutes.Welcome) { inclusive = true }
                             }
                         } else {
-                            Toast.makeText(
-                                context,
-                                error ?: "Error desconocido",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(ctx, error ?: "Error desconocido", Toast.LENGTH_SHORT).show()
                         }
                     }
                 },
-                onRegister = { navController.navigate(NavigationRoutes.Registro) },
-                onGoogleClick = onGoogleSignIn,
+                onRegister   = { navController.navigate(NavigationRoutes.Registro) },
+                onGoogleClick= onGoogleSignIn,
                 navController = navController
             )
         }
 
+        // --- Levels ---
         composable(NavigationRoutes.Levels) {
             MainScaffold(navController) {
-                LevelScreen(
-                    navController = navController,
-                    viewModel = viewModel
-                )
+                LevelScreen(navController = navController, viewModel = mainViewModel)
             }
         }
 
+        // --- Quiz por nivel ---
         composable(
             route = "${NavigationRoutes.Quiz}/{level}",
             arguments = listOf(navArgument("level") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val level = backStackEntry.arguments?.getInt("level") ?: 1
+        ) { back ->
+            val lvl = back.arguments?.getInt("level") ?: 1
             val quizVm: QuizViewModel = viewModel(
-                viewModelStoreOwner = backStackEntry,
+                viewModelStoreOwner = back,
                 modelClass = QuizViewModel::class.java
             )
-            LaunchedEffect(level) {
-                quizVm.fetchQuestions(level)
-            }
-            QuizScreen(
-                navController = navController,
-                level = level,
-                viewModel = quizVm
-            )
+            LaunchedEffect(lvl) { quizVm.fetchQuestions(lvl) }
+            QuizScreen(navController = navController, level = lvl, viewModel = quizVm)
         }
 
+        // --- Quiz terminado ---
         composable(
             route = "${NavigationRoutes.QuizFinished}/{correctAnswers}/{totalQuestions}",
             arguments = listOf(
                 navArgument("correctAnswers") { type = NavType.IntType },
-                navArgument("totalQuestions") { type = NavType.IntType }
+                navArgument("totalQuestions")  { type = NavType.IntType }
             )
         ) { back ->
             val correct = back.arguments?.getInt("correctAnswers") ?: 0
-            val total = back.arguments?.getInt("totalQuestions") ?: 0
+            val total   = back.arguments?.getInt("totalQuestions")  ?: 0
             QuizFinishedScreen(
-                correctAnswers = correct,
-                totalQuestions = total,
-                navController = navController,
-                viewModel = viewModel
+                correctAnswers  = correct,
+                totalQuestions  = total,
+                navController   = navController,
+                viewModel       = mainViewModel
             )
         }
 
         composable(NavigationRoutes.Profile) {
-            MainScaffold(navController) {
-                val user = viewModel.currentUser ?: User(
-                    name = "Invitado",
-                    age = "",
-                    country = "Desconocido",
-                    isAdmin = false,
-                    currentLevel = 1,
-                    puntos = 0,
-                    email = "",
-                    password = ""
-                )
-                ProfileScreen(
-                    user = user,
-                    onEditProfile = { navController.navigate(NavigationRoutes.EditProfile) },
-                    onDeleteAccount = {
-                        viewModel.deleteAccount {
-                            navController.navigate(NavigationRoutes.ConfirmDelete) {
-                                popUpTo(NavigationRoutes.Profile) { inclusive = true }
-                            }
-                        }
-                    },
-                    onLogout = {
-                        viewModel.signOut()
-                        navController.navigate(NavigationRoutes.Welcome) {
-                            popUpTo(NavigationRoutes.Welcome) { inclusive = true }
-                        }
-                    }
-                )
-            }
-        }
+            val user = mainViewModel.currentUser
 
-        composable(NavigationRoutes.EditProfile) {
             MainScaffold(navController) { contentModifier ->
-                val user = viewModel.currentUser
-                if (user != null) {
-                    Box(modifier = contentModifier.fillMaxSize()) {
-                        EditProfileScreen(
-                            viewModel   = viewModel,
-                            currentUser = user,
-                            onCancel    = { navController.popBackStack() }
-                        )
+                if (user == null) {
+                    Box(
+                        modifier = contentModifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 } else {
-                    Box(modifier = contentModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                    Box(modifier = contentModifier.fillMaxSize()) {
+                        ProfileScreen(
+                            user = user,
+                            onEditProfile   = { navController.navigate(NavigationRoutes.EditProfile) },
+                            onDeleteAccount = { navController.navigate(NavigationRoutes.ConfirmDelete) },
+                            onLogout        = {
+                                mainViewModel.signOut()
+                                navController.navigate(NavigationRoutes.Welcome) {
+                                    popUpTo(0)
+                                }
+                            }
+                        )
                     }
                 }
             }
         }
 
+        composable(NavigationRoutes.DeleteAccount) {
+            DeleteAccountScreen(
+                onAccountDeleted = {
+                    // 1) Cierra la sesión
+                    mainViewModel.signOut()
+                    // 2) Reemplaza esta ruta por la de ConfirmDelete
+                    navController.navigate(NavigationRoutes.ConfirmDelete) {
+                        popUpTo(NavigationRoutes.DeleteAccount) { inclusive = true }
+                    }
+                },
+                onCancel = {
+                    // Si el usuario cancela, simplemente regresa a Profile
+                    navController.popBackStack()
+                }
+            )
+        }
+
+
+        composable(NavigationRoutes.ConfirmDelete) {
+            ConfirmDeleteScreen(navController)
+        }
+
+        composable(NavigationRoutes.EditProfile) {
+            MainScaffold(navController) { padding ->
+                val user = mainViewModel.currentUser
+                if (user == null) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    EditProfileScreen(
+                        viewModel   = mainViewModel,
+                        currentUser = user,
+                        onCancel    = { navController.popBackStack() }
+                    )
+                }
+            }
+        }
 
         composable(NavigationRoutes.Ranking) {
             val rankingVm: RankingViewModel = viewModel()
             val players by rankingVm.players.collectAsState()
-            RankingScreen(
-                navController = navController,
-                players       = players
-            )
+            RankingScreen(navController = navController, players = players)
         }
 
         composable(NavigationRoutes.ProgressExplosion) {
             MainScaffold(navController) {
-                val user = viewModel.currentUser ?: User(
-                    name = "Invitado",
-                    age = "",
-                    country = "Desconocido",
-                    isAdmin = false,
-                    currentLevel = 1,
-                    puntos = 0,
-                    email = "",
-                    password = ""
-                )
+                val user = mainViewModel.currentUser
+                    ?: User( name="", age="", country="", isAdmin=false,
+                        currentLevel=1, puntos=0, email="", password="")
                 ProgressExplosionScreen(
-                    navController = navController,
-                    user = user,
-                    onStartLesson = {
-                        navController.navigate("${NavigationRoutes.Quiz}/1")
-                    }
+                    navController   = navController,
+                    user            = user,
+                    onStartLesson   = { navController.navigate("${NavigationRoutes.Quiz}/1") }
                 )
             }
         }
@@ -189,13 +185,9 @@ fun NavGraph(
         composable(NavigationRoutes.Registro) {
             Registro(
                 navController = navController,
-                viewModel = viewModel,
-                onCancel = { navController.popBackStack() }
+                viewModel     = mainViewModel,
+                onCancel      = { navController.popBackStack() }
             )
-        }
-
-        composable(NavigationRoutes.ConfirmDelete) {
-            ConfirmDeleteScreen(navController)
         }
     }
 }

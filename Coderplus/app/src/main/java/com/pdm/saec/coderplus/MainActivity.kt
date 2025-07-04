@@ -40,21 +40,21 @@ class MainActivity : ComponentActivity() {
             .requestEmail()
             .build()
         val googleClient = GoogleSignIn.getClient(this, gso)
-
         setContent {
             CoderplusTheme {
                 Surface(color = Color.White) {
                     navController = rememberNavController()
                     NavGraph(
-                        navController = navController,
-                        viewModel = viewModel,
-                        onGoogleSignIn = {
+                        navController   = navController,
+                        mainViewModel   = viewModel,
+                        onGoogleSignIn  = {
                             googleSignInLauncher.launch(googleClient.signInIntent)
                         }
                     )
                 }
             }
         }
+
     }
     private fun handleSignInResult(data: Intent?) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
